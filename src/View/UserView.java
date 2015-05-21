@@ -5,7 +5,8 @@ import Model.CommunicationModel;
 
 public class UserView extends View {
 
-	public UserView(Controller controller, CommunicationModel model) {
+	public UserView() {
+		super("Control de Plataforma");
 		// TODO Auto-generated constructor stub
 	}
 
