@@ -11,21 +11,30 @@ import View.View;
 public class Controller{
 	protected View view;
 	protected CommunicationModel model;
-	private PIDButtonListener pidListener;
+	private PIDButtonListener PIDListener;
 	private SetPointButtonListener setPointListener;
+	private GetPointButtonListener getPointListener;
+	private GetPIDButtonListener getPIDListener;
+	private SetPIDButtonListener setPIDListener;
 	
 	public Controller(CommunicationModel model){
 		this.model = model;
 		this.view = new UserView();
-		pidListener = new PIDButtonListener();
+		PIDListener = new PIDButtonListener();
+		getPIDListener = new GetPIDButtonListener();
+		setPIDListener = new SetPIDButtonListener();
 		setPointListener = new SetPointButtonListener();
+		getPointListener = new GetPointButtonListener();
 	}
 	
 	public Controller(CommunicationModel model, boolean DebugMode){
 		this.model = model;
 		this.view = DebugMode ? new DebugView() : new UserView();
-		pidListener = new PIDButtonListener();
+		PIDListener = new PIDButtonListener();
 		setPointListener = new SetPointButtonListener();
+		getPointListener = new GetPointButtonListener();
+		getPIDListener = new GetPIDButtonListener();
+		setPIDListener = new SetPIDButtonListener();
 	}
 	
 	/**
@@ -45,19 +54,20 @@ public class Controller{
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			System.out.println((model.isPIDActive()?"Activando ":"Desactivando ")+"PID");
 			try{
 				model.setPIDActive(!model.isPIDActive());
+				((DebugView)(view)).togglePID(model.isPIDActive());
+				System.out.println((model.isPIDActive()?"Desactivando ":"Activando ")+"PID");
 			}catch(NumberFormatException ex){
 				ex.printStackTrace();
 			}
 		}
 	}
-	class PIDSetButtonListener implements ActionListener{
+	class SetPIDButtonListener implements ActionListener{
 
-		public PIDSetButtonListener() {
+		public SetPIDButtonListener() {
 			System.out.println("Creando PIDListener");
-			view.addPIDSetButtonListener(this);
+			view.addSetPIDButtonListener(this);
 		}
 		
 		@Override
@@ -65,6 +75,23 @@ public class Controller{
 			System.out.println("Boton Set PID");
 			try{
 				model.setPIDParameters(view.getNewKp(), view.getNewKi(), view.getNewKd());
+			}catch(NumberFormatException ex){
+				ex.printStackTrace();
+			}
+		}
+	}
+	class GetPIDButtonListener implements ActionListener{
+
+		public GetPIDButtonListener() {
+			System.out.println("Creando PIDGetterListener");
+			view.addGetPIDButtonListener(this);
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			System.out.println("Boton Get PID");
+			try{
+				view.updatePID(model.getKP(),model.getKI(),model.getKD());
 			}catch(NumberFormatException ex){
 				ex.printStackTrace();
 			}
@@ -81,6 +108,24 @@ public class Controller{
 			System.out.println("Boton SET");
 			try{
 				model.setPoint(view.getNewPitch(), view.getNewYaw(), view.getNewRoll());
+			}catch(NumberFormatException ex){
+				ex.printStackTrace();
+			}
+			
+		}
+		
+	}
+	class GetPointButtonListener implements ActionListener{
+		
+		public GetPointButtonListener(){
+			System.out.println("Creando GETListener");
+			view.addGetPointButtonListener(this);
+		}
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			System.out.println("Boton GET");
+			try{
+				view.updatePos(model.getPitchPoint(), model.getYawPoint(), model.getRollPoint());
 			}catch(NumberFormatException ex){
 				ex.printStackTrace();
 			}

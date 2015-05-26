@@ -22,7 +22,7 @@ public abstract class View extends JFrame implements ModelObserver{
 	protected static int pitchtime,yawtime,rolltime;
 	protected Controller controller;
 	protected JTextField  newPitch, newYaw, newRoll;
-	protected JButton pidButton, setPointButton, setPIDButton;
+	protected JButton pidButton, setPointButton, getPointButton ,setPIDButton, getPIDButton;
 	protected JTextField newKp,newKi,newKd;
 	
 	public View(String title){
@@ -42,6 +42,9 @@ public abstract class View extends JFrame implements ModelObserver{
 		
 		pidButton = new JButton("PID");
 		setPointButton = new JButton("Set Point");
+		getPointButton = new JButton("Get Point");
+		setPIDButton = new JButton("Set PID");
+		getPIDButton = new JButton("Get PID");
 		
 		newPitch = new JTextField();
 		newYaw = new JTextField();
@@ -56,27 +59,27 @@ public abstract class View extends JFrame implements ModelObserver{
 	}
 	
 	public float getNewPitch() throws NumberFormatException{
-		return Integer.parseInt(newPitch.getText());
+		return Float.parseFloat(newPitch.getText());
 	}
 	
 	public float getNewYaw() throws NumberFormatException{
-		return Integer.parseInt(newYaw.getText());
+		return Float.parseFloat(newYaw.getText());
 	}
 	
 	public float getNewRoll() throws NumberFormatException{
-		return Integer.parseInt(newRoll.getText());
+		return Float.parseFloat(newRoll.getText());
 	}
 	
 	public float getNewKp() throws NumberFormatException{
-		return Integer.parseInt(newKp.getText());
+		return Float.parseFloat(newKp.getText());
 	}
 	
 	public float getNewKi() throws NumberFormatException{
-		return Integer.parseInt(newKi.getText());
+		return Float.parseFloat(newKi.getText());
 	}
 	
 	public float getNewKd() throws NumberFormatException{
-		return Integer.parseInt(newKd.getText());
+		return Float.parseFloat(newKd.getText());
 	}
 	
 	public void addPIDButtonListener(ActionListener listener){
@@ -86,8 +89,32 @@ public abstract class View extends JFrame implements ModelObserver{
 	public void addSetPointButtonListener(ActionListener listener){
 		setPointButton.addActionListener(listener);
 	}
+	
+	public void addGetPointButtonListener(ActionListener listener){
+		getPointButton.addActionListener(listener);
+	}
 
-	public void addPIDSetButtonListener(ActionListener listener) {
+	public void addSetPIDButtonListener(ActionListener listener) {
 		setPIDButton.addActionListener(listener);
+	}
+	
+	public void updatePID(float kp,float ki,float kd){
+		newKp.setText(Float.toString(kp));
+		newKi.setText(Float.toString(ki));
+		newKd.setText(Float.toString(kd));
+	}
+	
+	public void updatePos(float pitch,float yaw, float roll){
+		newPitch.setText(Float.toString(pitch));
+		newYaw.setText(Float.toString(yaw));
+		newRoll.setText(Float.toString(roll));
+		
+		pitchSlider.setValue((int)(pitch));
+		yawSlider.setValue((int)(yaw));
+		rollSlider.setValue((int)(roll));
+	}
+
+	public void addGetPIDButtonListener(ActionListener listener){
+		getPIDButton.addActionListener(listener);
 	}
 }

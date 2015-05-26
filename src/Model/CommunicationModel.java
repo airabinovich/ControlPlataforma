@@ -43,4 +43,22 @@ public class CommunicationModel  {
 	public void setPIDActive(boolean isActive){
 		PID = isActive;
 	}
+	public float getKP(){
+		return kp;
+	}
+	public float getKI(){
+		return ki;
+	}
+	public float getKD(){
+		return kd;
+	}
+	public float getPitchPoint(){
+		return pitchPoint;
+	}
+	public float getYawPoint(){
+		return yawPoint;
+	}
+	public float getRollPoint(){
+		return rollPoint;
+	}
 }
