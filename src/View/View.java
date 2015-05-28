@@ -13,6 +13,8 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import Controller.Controller;
+import Model.GradoDeLibertad;
+
 
 public abstract class View extends JFrame implements ModelObserver{
 	private static final long serialVersionUID = 1L;
@@ -23,7 +25,9 @@ public abstract class View extends JFrame implements ModelObserver{
 	protected Controller controller;
 	protected JTextField  newPitch, newYaw, newRoll;
 	protected JButton pidButton, setPointButton, getPointButton ,setPIDButton, getPIDButton;
-	protected JTextField newKp,newKi,newKd;
+	protected JTextField 	newKpPitch,newKiPitch,newKdPitch,
+							newKpYaw,newKiYaw,newKdYaw,
+							newKpRoll,newKiRoll,newKdRoll;
 	
 	public View(String title){
 		super(title);
@@ -70,16 +74,37 @@ public abstract class View extends JFrame implements ModelObserver{
 		return Float.parseFloat(newRoll.getText());
 	}
 	
-	public float getNewKp() throws NumberFormatException{
-		return Float.parseFloat(newKp.getText());
+	public float getNewKp(GradoDeLibertad grado) throws NumberFormatException{
+		switch(grado){
+			case PITCH:
+				return Float.parseFloat(newKpPitch.getText());
+			case YAW:
+				return Float.parseFloat(newKpYaw.getText());
+			default:
+				return Float.parseFloat(newKpRoll.getText());
+		}
 	}
 	
-	public float getNewKi() throws NumberFormatException{
-		return Float.parseFloat(newKi.getText());
+	public float getNewKi(GradoDeLibertad grado) throws NumberFormatException{
+		switch(grado){
+			case PITCH:
+				return Float.parseFloat(newKiPitch.getText());
+			case YAW:
+				return Float.parseFloat(newKiYaw.getText());
+			default:
+				return Float.parseFloat(newKiRoll.getText());
+		}
 	}
 	
-	public float getNewKd() throws NumberFormatException{
-		return Float.parseFloat(newKd.getText());
+	public float getNewKd(GradoDeLibertad grado) throws NumberFormatException{
+		switch(grado){
+			case PITCH:
+				return Float.parseFloat(newKdPitch.getText());
+			case YAW:
+				return Float.parseFloat(newKdYaw.getText());
+			default:
+				return Float.parseFloat(newKdRoll.getText());
+		}
 	}
 	
 	public void addPIDButtonListener(ActionListener listener){
@@ -98,10 +123,28 @@ public abstract class View extends JFrame implements ModelObserver{
 		setPIDButton.addActionListener(listener);
 	}
 	
-	public void updatePID(float kp,float ki,float kd){
-		newKp.setText(Float.toString(kp));
-		newKi.setText(Float.toString(ki));
-		newKd.setText(Float.toString(kd));
+	public void updatePID(GradoDeLibertad grado, float kp,float ki,float kd){
+		JTextField auxKp, auxKi, auxKd;
+		switch(grado){
+		case PITCH:
+			auxKp = newKpPitch;
+			auxKi = newKiPitch;
+			auxKd = newKdPitch;
+			break;
+		case YAW:
+			auxKp = newKpYaw;
+			auxKi = newKiYaw;
+			auxKd = newKdYaw;
+			break;
+		default:
+			auxKp = newKpRoll;
+			auxKi = newKiRoll;
+			auxKd = newKdRoll;
+			break;
+	}
+		auxKp.setText(Float.toString(kp));
+		auxKi.setText(Float.toString(ki));
+		auxKd.setText(Float.toString(kd));
 	}
 	
 	public void updatePos(float pitch,float yaw, float roll){

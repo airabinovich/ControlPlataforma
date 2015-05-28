@@ -1,26 +1,39 @@
 package View;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
+import java.awt.Graphics;
+import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.jfree.chart.ChartPanel;
 
+import sun.java2d.loops.DrawLine;
+
 public class DebugView extends View {
 
 	private static final long serialVersionUID = 1L;
 	private Container contentpane;
-	private JLabel	pitchText, yawText, rollText, kpText, kiText, kdText, activePIDText;
+	private JLabel	pitchText, yawText, rollText,
+					kpPitchText, kiPitchText, kdPitchText,
+					kpYawText, kiYawText, kdYawText,
+					kpRollText, kiRollText, kdRollText,
+					activePIDText;
 	public DebugView() {
 		
 		super("Control de Plataforma - Debug Mode");
@@ -38,7 +51,7 @@ public class DebugView extends View {
 		this.setBounds(200, 50, 850, 600);
 		
 		int alto = this.getHeight(), ancho = this.getWidth();
-		
+	
 		JPanel	pitchPanel = new ChartPanel(pitchGraph),
 				yawPanel = new ChartPanel(yawGraph),
 				rollPanel = new ChartPanel(rollGraph);
@@ -47,36 +60,38 @@ public class DebugView extends View {
 		yawPanel.setBounds(0, alto/3, ancho/2, alto/3);
 		rollPanel.setBounds(0, 2*alto/3, ancho/2, alto/3);
 		
-		newPitch.setBounds(4*ancho/8 + 10,alto * 11/12, 100, 30);
-		newYaw.setBounds(11*ancho/16 ,alto * 11/12, 100, 30);
-		newRoll.setBounds(14*ancho/16,alto * 11/12, 100, 30);
+		Point 	pitchBase = new Point(ancho * 3/6, 0),
+				yawBase = new Point(ancho * 4/6, 0),
+				rollBase = new Point(ancho * 5/6,0),
+				midPoint = pitchBase;
 		
-		newPitch.setText("0.0");
-		newYaw.setText("0.0");
-		newRoll.setText("0.0");
+		pitchText = new JLabel("Pitch:");
+		yawText = new JLabel("Yaw:");
+		rollText = new JLabel("Roll:");
+		
+		pitchText.setBounds(pitchBase.x + 5, pitchBase.y , 100, 30);
+		yawText.setBounds(yawBase.x + 5, yawBase.y, 100, 30);
+		rollText.setBounds(rollBase.x + 5, rollBase.y, 100, 30);
 		
 		pitchSlider = new JSlider(SwingConstants.VERTICAL, -100, 100, 0);
 		yawSlider = new JSlider(SwingConstants.VERTICAL, -100, 100, 0);
 		rollSlider = new JSlider(SwingConstants.VERTICAL, -100, 100, 0);
 		
-		//pitchSlider.setMinorTickSpacing(1);
+		pitchSlider.setBounds(pitchBase.x + 50, pitchText.getY() + pitchText.getHeight() + 5, 50, 250);
+		yawSlider.setBounds(yawBase.x + 50, yawText.getY() + yawText.getHeight() + 5, 50, 250);
+		rollSlider.setBounds(rollBase.x + 50, rollText.getY() + rollText.getHeight() + 5, 50, 250);
+		
 		pitchSlider.setMajorTickSpacing(1);
 		pitchSlider.setPaintTicks(true);
 		pitchSlider.setPaintLabels(true);
 		
-		yawSlider.setMinorTickSpacing(1);
-		yawSlider.setMajorTickSpacing(2);
+		yawSlider.setMajorTickSpacing(1);
 		yawSlider.setPaintTicks(true);
 		yawSlider.setPaintLabels(true);
 		
-		rollSlider.setMinorTickSpacing(1);
-		rollSlider.setMajorTickSpacing(2);
+		rollSlider.setMajorTickSpacing(1);
 		rollSlider.setPaintTicks(true);
 		rollSlider.setPaintLabels(true);
-		
-		pitchSlider.setBounds(newPitch.getX() + newPitch.getWidth()/3, newPitch.getY() - 320, 50, 300);
-		yawSlider.setBounds(newYaw.getX() + newYaw.getWidth()/3, newYaw.getY() - 320, 50, 300);
-		rollSlider.setBounds(newRoll.getX() + newRoll.getWidth()/3, newRoll.getY() - 320, 50, 300);
 		
 		java.util.Hashtable<Integer,JLabel> labelTable = new java.util.Hashtable<Integer,JLabel>();
 		for(int i=-10;i<=10;i+=2){
@@ -91,41 +106,88 @@ public class DebugView extends View {
 		yawSlider.setBackground(Color.lightGray);
 		rollSlider.setBackground(Color.lightGray);
 		
-		newKp = new JTextField();
-		newKi = new JTextField();
-		newKd = new JTextField();
+		newPitch.setBounds(pitchBase.x + 10,pitchSlider.getY() + pitchSlider.getHeight() + 10 , 100, 30);
+		newYaw.setBounds(yawBase.x +10 , yawSlider.getY() + yawSlider.getHeight() + 10, 100, 30);
+		newRoll.setBounds(rollBase.x +10,rollSlider.getY() + rollSlider.getHeight() + 10, 100, 30);
 		
-		pitchText = new JLabel("Pitch:");
-		yawText = new JLabel("Yaw:");
-		rollText = new JLabel("Roll:");
-		kpText = new JLabel("Kp = ");
-		kiText = new JLabel("Ki = ");
-		kdText = new JLabel("Kp = ");
+		newPitch.setText("0.0");
+		newYaw.setText("0.0");
+		newRoll.setText("0.0");
+		
+		newKpPitch = new JTextField();
+		newKiPitch = new JTextField();
+		newKdPitch = new JTextField();
+		newKpYaw = new JTextField();
+		newKiYaw = new JTextField();
+		newKdYaw = new JTextField();
+		newKpRoll = new JTextField();
+		newKiRoll = new JTextField();
+		newKdRoll = new JTextField();
+		
+		kpPitchText = new JLabel("Kp = ");
+		kiPitchText = new JLabel("Ki = ");
+		kdPitchText = new JLabel("Kd = ");
+		kpYawText = new JLabel("Kp = ");
+		kiYawText = new JLabel("Ki = ");
+		kdYawText = new JLabel("Kd = ");
+		kpRollText = new JLabel("Kp = ");
+		kiRollText= new JLabel("Ki = ");
+		kdRollText = new JLabel("Kd = ");
 		activePIDText = new JLabel("PID desactivado");		
 		
-		pitchText.setBounds(newPitch.getX(), pitchSlider.getY() - 30, 100, 30);
-		yawText.setBounds(newYaw.getX(), yawSlider.getY() - 30, 100, 30);
-		rollText.setBounds(newRoll.getX(), rollSlider.getY() - 30, 100, 30);
+		kpPitchText.setBounds(pitchBase.x + 10, newPitch.getY() + newPitch.getHeight() + 10 , 50, 30);
+		kiPitchText.setBounds(pitchBase.x + 10, kpPitchText.getY() + kpPitchText.getHeight() + 10 , 50, 30);
+		kdPitchText.setBounds(pitchBase.x + 10, kiPitchText.getY() + kiPitchText.getHeight() + 10 , 50, 30);
 		
-		kpText.setBounds(ancho/2 +10, alto/12 , 50, 30);
-		kiText.setBounds(ancho/2 +10, alto/6 , 50, 30);
-		kdText.setBounds(ancho/2 +10, alto/4 , 50, 30);
+		kpYawText.setBounds(yawBase.x + 10, newYaw.getY() + newYaw.getHeight() + 10 , 50, 30);
+		kiYawText.setBounds(yawBase.x + 10, kpYawText.getY() + kpYawText.getHeight() + 10 , 50, 30);
+		kdYawText.setBounds(yawBase.x + 10, kiYawText.getY() + kiYawText.getHeight() + 10 , 50, 30);
 		
-		newKp.setBounds(kpText.getX() + kpText.getWidth(), kpText.getY(), 100, 30);
-		newKi.setBounds(kiText.getX() + kiText.getWidth(), kiText.getY(), 100, 30);
-		newKd.setBounds(kdText.getX() + kdText.getWidth(), kdText.getY(), 100, 30);
+		kpRollText.setBounds(rollBase.x + 10, newRoll.getY() + newRoll.getHeight() + 10 , 50, 30);
+		kiRollText.setBounds(rollBase.x + 10, kpRollText.getY() + kpRollText.getHeight() + 10 , 50, 30);
+		kdRollText.setBounds(rollBase.x + 10, kiRollText.getY() + kiRollText.getHeight() + 10 , 50, 30);
 		
-		newKp.setText("1.0");
-		newKi.setText("0.0");
-		newKd.setText("0.0");
+		newKpPitch.setBounds(kpPitchText.getX() + kpPitchText.getWidth(), kpPitchText.getY(), 50, 30);
+		newKiPitch.setBounds(kiPitchText.getX() + kiPitchText.getWidth(), kiPitchText.getY(), 50, 30);
+		newKdPitch.setBounds(kdPitchText.getX() + kdPitchText.getWidth(), kdPitchText.getY(), 50, 30);
 		
-		pidButton.setBounds(ancho/2 + 10, alto/48, 100, 30);
+		newKpYaw.setBounds(kpYawText.getX() + kpYawText.getWidth(), kpYawText.getY(), 50, 30);
+		newKiYaw.setBounds(kiYawText.getX() + kiYawText.getWidth(), kiYawText.getY(), 50, 30);
+		newKdYaw.setBounds(kdYawText.getX() + kdYawText.getWidth(), kdYawText.getY(), 50, 30);
+		
+		newKpRoll.setBounds(kpRollText.getX() + kpRollText.getWidth(), kpRollText.getY(), 50, 30);
+		newKiRoll.setBounds(kiRollText.getX() + kiRollText.getWidth(), kiRollText.getY(), 50, 30);
+		newKdRoll.setBounds(kdRollText.getX() + kdRollText.getWidth(), kdRollText.getY(), 50, 30);
+		
+		newKpPitch.setText("1.0");
+		newKiPitch.setText("0.0");
+		newKdPitch.setText("0.0");
+		
+		newKpYaw.setText("1.0");
+		newKiYaw.setText("0.0");
+		newKdYaw.setText("0.0");
+		
+		newKpRoll.setText("1.0");
+		newKiRoll.setText("0.0");
+		newKdRoll.setText("0.0");
+		
+		JSeparator 	separador1 = new JSeparator(SwingConstants.HORIZONTAL),
+					separador2 = new JSeparator(SwingConstants.VERTICAL),
+					separador3 = new JSeparator(SwingConstants.VERTICAL);
+		separador1.setBounds(ancho/2, newKdPitch.getY() +  newKdPitch.getHeight() + 10, ancho/2, 1);
+		separador2.setBounds(yawBase.x, 0, 1, separador1.getY());
+		separador3.setBounds(rollBase.x, 0, 1, separador1.getY());
+		fondo.add(separador1);
+		fondo.add(separador2);
+		fondo.add(separador3);
+		
+		pidButton.setBounds(midPoint.x + 10, separador1.getY() + 10, 100, 30);
 		activePIDText.setBounds(pidButton.getX() + pidButton.getWidth() + 10, pidButton.getY(), 150,30);
 		
-		getPointButton.setBounds(ancho*23/32, alto/4, 100, 30);
+		getPointButton.setBounds(midPoint.x + 10, pidButton.getY() + pidButton.getHeight() + 10, 100, 30);
 		setPointButton.setBounds(getPointButton.getX() + getPointButton.getWidth() + 10, getPointButton.getY(), 100, 30);
 		
-		getPIDButton.setBounds(ancho*23/32, alto/12, 100, 30);
+		getPIDButton.setBounds(midPoint.x + 10, getPointButton.getY() + getPointButton.getHeight() + 10, 100, 30);
 		setPIDButton.setBounds(getPIDButton.getX() + getPIDButton.getWidth() + 10, getPIDButton.getY(), 100, 30);
 		
 		contentpane.add(pitchPanel);
@@ -145,13 +207,28 @@ public class DebugView extends View {
 		contentpane.add(pitchSlider);
 		contentpane.add(yawSlider);
 		contentpane.add(rollSlider);
-		contentpane.add(newKp);
-		contentpane.add(newKi);
-		contentpane.add(newKd);
-		contentpane.add(kpText);
-		contentpane.add(kiText);
-		contentpane.add(kdText);
+		contentpane.add(newKpPitch);
+		contentpane.add(newKiPitch);
+		contentpane.add(newKdPitch);
+		contentpane.add(newKpYaw);
+		contentpane.add(newKiYaw);
+		contentpane.add(newKdYaw);
+		contentpane.add(newKpRoll);
+		contentpane.add(newKiRoll);
+		contentpane.add(newKdRoll);
+		contentpane.add(kpPitchText);
+		contentpane.add(kiPitchText);
+		contentpane.add(kdPitchText);
+		contentpane.add(kpYawText);
+		contentpane.add(kiYawText);
+		contentpane.add(kdYawText);
+		contentpane.add(kpRollText);
+		contentpane.add(kiRollText);
+		contentpane.add(kdRollText);
 		contentpane.add(activePIDText);
+		contentpane.add(separador1);
+		contentpane.add(separador2);
+		contentpane.add(separador3);
 		
 		contentpane.add(fondo);
 		

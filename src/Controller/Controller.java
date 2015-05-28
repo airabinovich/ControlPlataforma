@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import Model.CommunicationModel;
+import Model.GradoDeLibertad;
 import View.DebugView;
 import View.UserView;
 import View.View;
@@ -71,7 +72,9 @@ public class Controller{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try{
-				model.setPIDParameters(view.getNewKp(), view.getNewKi(), view.getNewKd());
+				model.setPIDParameters(view.getNewKp(GradoDeLibertad.PITCH), view.getNewKi(GradoDeLibertad.PITCH), view.getNewKd(GradoDeLibertad.PITCH));
+				model.setPIDParameters(view.getNewKp(GradoDeLibertad.YAW), view.getNewKi(GradoDeLibertad.YAW), view.getNewKd(GradoDeLibertad.YAW));
+				model.setPIDParameters(view.getNewKp(GradoDeLibertad.ROLL), view.getNewKi(GradoDeLibertad.ROLL), view.getNewKd(GradoDeLibertad.ROLL));
 			}catch(NumberFormatException ex){
 				ex.printStackTrace();
 			}
@@ -86,7 +89,9 @@ public class Controller{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try{
-				view.updatePID(model.getKP(),model.getKI(),model.getKD());
+				view.updatePID(GradoDeLibertad.PITCH,model.getKP(),model.getKI(),model.getKD());
+				view.updatePID(GradoDeLibertad.YAW,model.getKP(),model.getKI(),model.getKD());
+				view.updatePID(GradoDeLibertad.ROLL,model.getKP(),model.getKI(),model.getKD());
 			}catch(NumberFormatException ex){
 				ex.printStackTrace();
 			}
