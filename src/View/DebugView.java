@@ -51,12 +51,16 @@ public class DebugView extends View {
 		newYaw.setBounds(11*ancho/16 ,alto * 11/12, 100, 30);
 		newRoll.setBounds(14*ancho/16,alto * 11/12, 100, 30);
 		
-		pitchSlider = new JSlider(SwingConstants.VERTICAL, -10, 10, 0);
-		yawSlider = new JSlider(SwingConstants.VERTICAL, -10, 10, 0);
-		rollSlider = new JSlider(SwingConstants.VERTICAL, -10, 10, 0);
+		newPitch.setText("0.0");
+		newYaw.setText("0.0");
+		newRoll.setText("0.0");
 		
-		pitchSlider.setMinorTickSpacing(1);
-		pitchSlider.setMajorTickSpacing(2);
+		pitchSlider = new JSlider(SwingConstants.VERTICAL, -100, 100, 0);
+		yawSlider = new JSlider(SwingConstants.VERTICAL, -100, 100, 0);
+		rollSlider = new JSlider(SwingConstants.VERTICAL, -100, 100, 0);
+		
+		//pitchSlider.setMinorTickSpacing(1);
+		pitchSlider.setMajorTickSpacing(1);
 		pitchSlider.setPaintTicks(true);
 		pitchSlider.setPaintLabels(true);
 		
@@ -74,6 +78,15 @@ public class DebugView extends View {
 		yawSlider.setBounds(newYaw.getX() + newYaw.getWidth()/3, newYaw.getY() - 320, 50, 300);
 		rollSlider.setBounds(newRoll.getX() + newRoll.getWidth()/3, newRoll.getY() - 320, 50, 300);
 		
+		java.util.Hashtable<Integer,JLabel> labelTable = new java.util.Hashtable<Integer,JLabel>();
+		for(int i=-10;i<=10;i+=2){
+			labelTable.put(new Integer(i*10), new JLabel(Integer.toString(i)));
+		}
+		
+		pitchSlider.setLabelTable(labelTable);
+		yawSlider.setLabelTable(labelTable);
+		rollSlider.setLabelTable(labelTable);
+		
 		pitchSlider.setBackground(Color.lightGray);
 		yawSlider.setBackground(Color.lightGray);
 		rollSlider.setBackground(Color.lightGray);
@@ -82,18 +95,13 @@ public class DebugView extends View {
 		newKi = new JTextField();
 		newKd = new JTextField();
 		
-		newKp.setBounds(ancho/2 +10, alto/12 , 100, 30);
-		newKi.setBounds(ancho/2 +10, alto/6 , 100, 30);
-		newKd.setBounds(ancho/2 +10, alto/4 , 100, 30);
-		
 		pitchText = new JLabel("Pitch:");
 		yawText = new JLabel("Yaw:");
 		rollText = new JLabel("Roll:");
 		kpText = new JLabel("Kp = ");
 		kiText = new JLabel("Ki = ");
 		kdText = new JLabel("Kp = ");
-		activePIDText = new JLabel("PID desactivado");
-		
+		activePIDText = new JLabel("PID desactivado");		
 		
 		pitchText.setBounds(newPitch.getX(), pitchSlider.getY() - 30, 100, 30);
 		yawText.setBounds(newYaw.getX(), yawSlider.getY() - 30, 100, 30);
@@ -106,6 +114,10 @@ public class DebugView extends View {
 		newKp.setBounds(kpText.getX() + kpText.getWidth(), kpText.getY(), 100, 30);
 		newKi.setBounds(kiText.getX() + kiText.getWidth(), kiText.getY(), 100, 30);
 		newKd.setBounds(kdText.getX() + kdText.getWidth(), kdText.getY(), 100, 30);
+		
+		newKp.setText("1.0");
+		newKi.setText("0.0");
+		newKd.setText("0.0");
 		
 		pidButton.setBounds(ancho/2 + 10, alto/48, 100, 30);
 		activePIDText.setBounds(pidButton.getX() + pidButton.getWidth() + 10, pidButton.getY(), 150,30);
@@ -150,63 +162,71 @@ public class DebugView extends View {
 		pitchSlider.addChangeListener(new ChangeListener(){
             @Override
             public void stateChanged(ChangeEvent e) {
-                newPitch.setText(String.valueOf(pitchSlider.getValue()));
+                newPitch.setText(String.valueOf(pitchSlider.getValue()/10.));
             }
         });
 		
         newPitch.addKeyListener(new KeyAdapter(){
             @Override
             public void keyReleased(KeyEvent ke) {
-                String typed = newPitch.getText();
-                pitchSlider.setValue(0);
-                if(!typed.matches("\\d+") || typed.length() > 3) {
-                    return;
-                }
-                int value = Integer.parseInt(typed);
-                pitchSlider.setValue(value);
+            	if(ke.getKeyCode()==KeyEvent.VK_ENTER){
+	                String typed = newPitch.getText();
+	                System.out.println("ENTER PITCH: "+newPitch.getText());
+	                try{
+		                float value = Float.parseFloat(typed);
+		                pitchSlider.setValue(Math.round(value*10));
+	                }catch(NumberFormatException ex){
+	                	ex.printStackTrace();
+	                }
+            	}else System.out.println("NO ENTER");
             }
         });
         
         yawSlider.addChangeListener(new ChangeListener(){
             @Override
             public void stateChanged(ChangeEvent e) {
-                newYaw.setText(String.valueOf(yawSlider.getValue()));
+                newYaw.setText(String.valueOf(yawSlider.getValue()/10.));
             }
         });
 		
         newYaw.addKeyListener(new KeyAdapter(){
             @Override
             public void keyReleased(KeyEvent ke) {
-                String typed = newYaw.getText();
-                yawSlider.setValue(0);
-                if(!typed.matches("\\d+") || typed.length() > 3) {
-                    return;
-                }
-                int value = Integer.parseInt(typed);
-                yawSlider.setValue(value);
+            	if(ke.getKeyCode()==KeyEvent.VK_ENTER){
+	                String typed = newYaw.getText();
+	                System.out.println("ENTER YAW: "+newYaw.getText());
+	                try{
+		                float value = Float.parseFloat(typed);
+		                yawSlider.setValue(Math.round(value*10));
+	                }catch(NumberFormatException ex){
+	                	ex.printStackTrace();
+	                }
+            	}else System.out.println("NO ENTER");
             }
         });
         
         rollSlider.addChangeListener(new ChangeListener(){
             @Override
             public void stateChanged(ChangeEvent e) {
-                newRoll.setText(String.valueOf(rollSlider.getValue()));
+                newRoll.setText(String.valueOf(rollSlider.getValue()/10.));
             }
         });
 		
         newRoll.addKeyListener(new KeyAdapter(){
             @Override
             public void keyReleased(KeyEvent ke) {
-                String typed = newRoll.getText();
-                rollSlider.setValue(0);
-                if(!typed.matches("\\d+") || typed.length() > 3) {
-                    return;
-                }
-                int value = Integer.parseInt(typed);
-                rollSlider.setValue(value);
+            	if(ke.getKeyCode()==KeyEvent.VK_ENTER){
+	                String typed = newRoll.getText();
+	                System.out.println("ENTER ROLL: "+newRoll.getText());
+	                try{
+		                float value = Float.parseFloat(typed);
+		                rollSlider.setValue(Math.round(value*10));
+	                }catch(NumberFormatException ex){
+	                	ex.printStackTrace();
+	                }
+            	}else System.out.println("NO ENTER");
             }
         });
-		
 		
 	}
 
@@ -252,6 +272,12 @@ public class DebugView extends View {
 	
 	public void togglePID(boolean state){
 		activePIDText.setText(state ? "PID Activado" : "PID Desactivado");
+	}
+	
+	public void updatePos(float pitch,float yaw, float roll){
+		pitchSlider.setValue((int)(pitch*10));
+		yawSlider.setValue((int)(yaw*10));
+		rollSlider.setValue((int)(roll*10));
 	}
 	
 }

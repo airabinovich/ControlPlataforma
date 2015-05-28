@@ -48,7 +48,6 @@ public class Controller{
 	class PIDButtonListener implements ActionListener{
 
 		public PIDButtonListener() {
-			System.out.println("Creando PIDListener");
 			view.addPIDButtonListener(this);
 		}
 		
@@ -57,7 +56,7 @@ public class Controller{
 			try{
 				model.setPIDActive(!model.isPIDActive());
 				((DebugView)(view)).togglePID(model.isPIDActive());
-				System.out.println((model.isPIDActive()?"Desactivando ":"Activando ")+"PID");
+				System.out.println((model.isPIDActive()?"Activando ":"Desactivando ")+"PID");
 			}catch(NumberFormatException ex){
 				ex.printStackTrace();
 			}
@@ -66,13 +65,11 @@ public class Controller{
 	class SetPIDButtonListener implements ActionListener{
 
 		public SetPIDButtonListener() {
-			System.out.println("Creando PIDListener");
 			view.addSetPIDButtonListener(this);
 		}
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("Boton Set PID");
 			try{
 				model.setPIDParameters(view.getNewKp(), view.getNewKi(), view.getNewKd());
 			}catch(NumberFormatException ex){
@@ -83,13 +80,11 @@ public class Controller{
 	class GetPIDButtonListener implements ActionListener{
 
 		public GetPIDButtonListener() {
-			System.out.println("Creando PIDGetterListener");
 			view.addGetPIDButtonListener(this);
 		}
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("Boton Get PID");
 			try{
 				view.updatePID(model.getKP(),model.getKI(),model.getKD());
 			}catch(NumberFormatException ex){
@@ -100,12 +95,10 @@ public class Controller{
 	class SetPointButtonListener implements ActionListener{
 		
 		public SetPointButtonListener(){
-			System.out.println("Creando SETListener");
 			view.addSetPointButtonListener(this);
 		}
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("Boton SET");
 			try{
 				model.setPoint(view.getNewPitch(), view.getNewYaw(), view.getNewRoll());
 			}catch(NumberFormatException ex){
@@ -118,12 +111,10 @@ public class Controller{
 	class GetPointButtonListener implements ActionListener{
 		
 		public GetPointButtonListener(){
-			System.out.println("Creando GETListener");
 			view.addGetPointButtonListener(this);
 		}
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("Boton GET");
 			try{
 				view.updatePos(model.getPitchPoint(), model.getYawPoint(), model.getRollPoint());
 			}catch(NumberFormatException ex){
