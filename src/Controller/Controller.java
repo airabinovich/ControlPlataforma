@@ -3,39 +3,52 @@ package Controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import Model.CommunicationModel;
+import Model.PlatformModel;
 import Model.GradoDeLibertad;
+import Model.TwoWaySerialComm;
 import View.DebugView;
 import View.UserView;
 import View.View;
 
 public class Controller{
 	protected View view;
-	protected CommunicationModel model;
+	protected PlatformModel model;
 	private PIDButtonListener PIDListener;
 	private SetPointButtonListener setPointListener;
 	private GetPointButtonListener getPointListener;
 	private GetPIDButtonListener getPIDListener;
 	private SetPIDButtonListener setPIDListener;
 	
-	public Controller(CommunicationModel model){
+	protected TwoWaySerialComm comunicacion;
+	
+	public Controller(PlatformModel model){
 		this.model = model;
-		this.view = new UserView();
+		this.view = new UserView(model);
 		PIDListener = new PIDButtonListener();
 		getPIDListener = new GetPIDButtonListener();
 		setPIDListener = new SetPIDButtonListener();
 		setPointListener = new SetPointButtonListener();
 		getPointListener = new GetPointButtonListener();
+		
+		comunicacion = new TwoWaySerialComm(this.model);
+		try {
+			comunicacion.connect("/dev/ttyACM0");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
-	public Controller(CommunicationModel model, boolean DebugMode){
+	public Controller(PlatformModel model, boolean DebugMode){
 		this.model = model;
-		this.view = DebugMode ? new DebugView() : new UserView();
+		this.view = DebugMode ? new DebugView(model) : new UserView(model);
 		PIDListener = new PIDButtonListener();
 		setPointListener = new SetPointButtonListener();
 		getPointListener = new GetPointButtonListener();
 		getPIDListener = new GetPIDButtonListener();
 		setPIDListener = new SetPIDButtonListener();
+		
+		comunicacion = new TwoWaySerialComm(this.model);
 	}
 	
 	/**
@@ -45,7 +58,29 @@ public class Controller{
 	public void UpdatePitch(float pitch){
 		view.updatePitch(pitch);
 	}
+	/**
+	 * @param pitch
+	 * @deprecated
+	 */
+	public void UpdateYaw(float yaw){
+		view.updateYaw(yaw);
+	}
+	/**
+	 * @param pitch
+	 * @deprecated
+	 */
+	public void UpdateRoll(float roll){
+		view.updateRoll(roll);
+	}
 	
+//	public void UpdateCurrentPos(float x,float y,float z,float yaw,float pitch,float roll){
+//		view.updateX(x);
+//		view.updateY(y);
+//		view.updateZ(z);
+//		view.updateYaw(yaw);
+//		view.updatePitch(pitch);
+//		view.updateRoll(roll);
+//	}
 	class PIDButtonListener implements ActionListener{
 
 		public PIDButtonListener() {
@@ -57,6 +92,9 @@ public class Controller{
 			try{
 				model.setPIDActive(!model.isPIDActive());
 				((DebugView)(view)).togglePID(model.isPIDActive());
+				
+				comunicacion.sendMessage();
+				
 				System.out.println((model.isPIDActive()?"Activando ":"Desactivando ")+"PID");
 			}catch(NumberFormatException ex){
 				ex.printStackTrace();
@@ -72,9 +110,11 @@ public class Controller{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try{
-				model.setPIDParameters(view.getNewKp(GradoDeLibertad.PITCH), view.getNewKi(GradoDeLibertad.PITCH), view.getNewKd(GradoDeLibertad.PITCH));
-				model.setPIDParameters(view.getNewKp(GradoDeLibertad.YAW), view.getNewKi(GradoDeLibertad.YAW), view.getNewKd(GradoDeLibertad.YAW));
-				model.setPIDParameters(view.getNewKp(GradoDeLibertad.ROLL), view.getNewKi(GradoDeLibertad.ROLL), view.getNewKd(GradoDeLibertad.ROLL));
+				model.setPIDParameters(GradoDeLibertad.PITCH,view.getNewKp(GradoDeLibertad.PITCH), view.getNewKi(GradoDeLibertad.PITCH), view.getNewKd(GradoDeLibertad.PITCH));
+				model.setPIDParameters(GradoDeLibertad.YAW,view.getNewKp(GradoDeLibertad.YAW), view.getNewKi(GradoDeLibertad.YAW), view.getNewKd(GradoDeLibertad.YAW));
+				model.setPIDParameters(GradoDeLibertad.ROLL,view.getNewKp(GradoDeLibertad.ROLL), view.getNewKi(GradoDeLibertad.ROLL), view.getNewKd(GradoDeLibertad.ROLL));
+				
+				comunicacion.sendMessage();
 			}catch(NumberFormatException ex){
 				ex.printStackTrace();
 			}
@@ -89,9 +129,9 @@ public class Controller{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try{
-				view.updatePID(GradoDeLibertad.PITCH,model.getKP(),model.getKI(),model.getKD());
-				view.updatePID(GradoDeLibertad.YAW,model.getKP(),model.getKI(),model.getKD());
-				view.updatePID(GradoDeLibertad.ROLL,model.getKP(),model.getKI(),model.getKD());
+				view.updatePID(GradoDeLibertad.PITCH,model.getKP(GradoDeLibertad.PITCH),model.getKI(GradoDeLibertad.PITCH),model.getKD(GradoDeLibertad.PITCH));
+				view.updatePID(GradoDeLibertad.YAW,model.getKP(GradoDeLibertad.YAW),model.getKI(GradoDeLibertad.YAW),model.getKD(GradoDeLibertad.YAW));
+				view.updatePID(GradoDeLibertad.ROLL,model.getKP(GradoDeLibertad.ROLL),model.getKI(GradoDeLibertad.ROLL),model.getKD(GradoDeLibertad.ROLL));
 			}catch(NumberFormatException ex){
 				ex.printStackTrace();
 			}
@@ -105,7 +145,9 @@ public class Controller{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try{
-				model.setPoint(view.getNewPitch(), view.getNewYaw(), view.getNewRoll());
+				model.setPoint( view.getNewYaw(), view.getNewPitch(), view.getNewRoll());
+				
+				comunicacion.sendMessage();
 			}catch(NumberFormatException ex){
 				ex.printStackTrace();
 			}

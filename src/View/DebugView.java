@@ -1,10 +1,7 @@
 package View;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Container;
-import java.awt.Graphics;
-import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -16,17 +13,15 @@ import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.jfree.chart.ChartPanel;
 
-import sun.java2d.loops.DrawLine;
+import Model.PlatformModel;
 
 public class DebugView extends View {
-
+	private static final int displayTime = 10;
 	private static final long serialVersionUID = 1L;
 	private Container contentpane;
 	private JLabel	pitchText, yawText, rollText,
@@ -34,9 +29,20 @@ public class DebugView extends View {
 					kpYawText, kiYawText, kdYawText,
 					kpRollText, kiRollText, kdRollText,
 					activePIDText;
-	public DebugView() {
+	
+	private JLabel motorText[];
+	private JTextField motorValue[];
+	public DebugView(PlatformModel model) {
 		
-		super("Control de Plataforma - Debug Mode");
+		super("Control de Plataforma - Debug Mode", model);
+		
+		motorText = new JLabel[6];
+		motorValue = new JTextField[6];
+		for(int i = 0; i < 6; i++){
+			motorText[i] = new JLabel("M"+Integer.toString(i+1)+" =");
+			motorValue[i] = new JTextField("0°");
+		}
+		
 		createView();
 	}
 
@@ -48,7 +54,7 @@ public class DebugView extends View {
 		fondo.setBackground(Color.lightGray);
 		
 		this.setResizable(false);
-		this.setBounds(200, 50, 850, 600);
+		this.setBounds(200, 50, 1000, 700);
 		
 		int alto = this.getHeight(), ancho = this.getWidth();
 	
@@ -189,7 +195,21 @@ public class DebugView extends View {
 		
 		getPIDButton.setBounds(midPoint.x + 10, getPointButton.getY() + getPointButton.getHeight() + 10, 100, 30);
 		setPIDButton.setBounds(getPIDButton.getX() + getPIDButton.getWidth() + 10, getPIDButton.getY(), 100, 30);
+		/////////////////////////////////////////////////
 		
+		Point motorLabelsRef = new Point(ancho * 13/16, separador1.getY() + 10);
+		motorText[0].setBounds(motorLabelsRef.x, motorLabelsRef.y, 50, 30);
+		motorValue[0].setBounds(motorText[0].getX() + motorText[0].getWidth(), motorText[0].getY(), 100, 30);
+		contentpane.add(motorText[0]);
+		contentpane.add(motorValue[0]);
+		for(int i = 1; i< motorText.length ; i++){
+			motorText[i].setBounds(motorText[i-1].getX(),motorText[i-1].getY()+motorText[i-1].getHeight()+10, 50, 30);
+			motorValue[i].setBounds(motorText[i].getX() + motorText[i].getWidth(), motorText[i].getY(), 100, 30);
+			contentpane.add(motorText[i]);
+			contentpane.add(motorValue[i]);
+		}
+		
+		/////////////////////////////////////////////////
 		contentpane.add(pitchPanel);
 		contentpane.add(yawPanel);
 		contentpane.add(rollPanel);
@@ -309,43 +329,41 @@ public class DebugView extends View {
 
 	@Override
 	public void updatePitch(float newPitch) {
+		if(pitchtime>displayTime) pitchData.removeValue("pitch", (Integer)(pitchtime-displayTime));
 		pitchData.addValue(newPitch, "pitch", (Integer)(++pitchtime));
 
 	}
 
 	@Override
 	public void updateRoll(float newRoll) {
+		if(rolltime>displayTime) rollData.removeValue("roll", (Integer)(rolltime-displayTime));
 		rollData.addValue(newRoll, "roll", (Integer)(++rolltime));
 	}
 
 	@Override
 	public void updateYaw(float newYaw) {
+		if(yawtime>displayTime) yawData.removeValue("yaw", (Integer)(yawtime-displayTime));
 		yawData.addValue(newYaw, "yaw", (Integer)(++yawtime));
 	}
 
 	@Override
-	public void updateAccelX() {
+	public void updateX(float newX) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void updateAccelY() {
+	public void updateY(float newY) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void updateAccelZ() {
+	public void updateZ(float newZ) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
-	public void updateHeight() {
-		// TODO Auto-generated method stub
-
-	}
 	
 	public void togglePID(boolean state){
 		activePIDText.setText(state ? "PID Activado" : "PID Desactivado");

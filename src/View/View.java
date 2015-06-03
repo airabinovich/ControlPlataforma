@@ -1,5 +1,6 @@
 package View;
 
+import java.awt.Font;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
@@ -14,6 +15,8 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 import Controller.Controller;
 import Model.GradoDeLibertad;
+import Model.ModelObserver;
+import Model.PlatformModel;
 
 
 public abstract class View extends JFrame implements ModelObserver{
@@ -29,8 +32,13 @@ public abstract class View extends JFrame implements ModelObserver{
 							newKpYaw,newKiYaw,newKdYaw,
 							newKpRoll,newKiRoll,newKdRoll;
 	
-	public View(String title){
+	protected PlatformModel model;
+	
+	public View(String title, PlatformModel model){
 		super(title);
+		
+		this.model = model;
+		model.attachObserver(this);
 		
 		pitchtime = 0;
 		yawtime = 0;
@@ -43,6 +51,16 @@ public abstract class View extends JFrame implements ModelObserver{
 		pitchGraph = ChartFactory.createLineChart("Pitch", "Tiempo", "Grados", pitchData);
 		yawGraph = ChartFactory.createLineChart("Yaw", "Tiempo", "Grados", yawData);
 		rollGraph = ChartFactory.createLineChart("Roll", "Tiempo", "Grados", rollData);
+		
+		pitchGraph.removeLegend();
+		yawGraph.removeLegend();
+		rollGraph.removeLegend();
+		
+		Font font = new Font("Plot", Font.PLAIN, 7);
+		
+		pitchGraph.getCategoryPlot().getDomainAxis().setTickLabelFont(font);
+		yawGraph.getCategoryPlot().getDomainAxis().setTickLabelFont(font);
+		rollGraph.getCategoryPlot().getDomainAxis().setTickLabelFont(font);
 		
 		pidButton = new JButton("PID");
 		setPointButton = new JButton("Set Point");
