@@ -23,6 +23,7 @@ public abstract class View extends JFrame{
 	private static final long serialVersionUID = 1L;
 	protected JFreeChart pitchGraph,yawGraph,rollGraph;
 	protected DefaultCategoryDataset pitchData,yawData,rollData;
+	protected DefaultCategoryDataset pitchSetPointData,yawSetPointData,rollSetPointData;
 	protected JSlider pitchSlider, yawSlider, rollSlider;
 	protected static int pitchtime,yawtime,rolltime;
 	protected Controller controller;
@@ -43,6 +44,10 @@ public abstract class View extends JFrame{
 		pitchData = new DefaultCategoryDataset();
 		yawData = new DefaultCategoryDataset();
 		rollData = new DefaultCategoryDataset();
+		
+		pitchSetPointData = new DefaultCategoryDataset();
+		yawSetPointData = new DefaultCategoryDataset();
+		rollSetPointData = new DefaultCategoryDataset();
 		
 		pitchGraph = ChartFactory.createLineChart("Pitch", "Tiempo", "Grados", pitchData);
 		yawGraph = ChartFactory.createLineChart("Yaw", "Tiempo", "Grados", yawData);
@@ -175,9 +180,9 @@ public abstract class View extends JFrame{
 		getPIDButton.addActionListener(listener);
 	}
 	
-	public abstract void updatePitch(float newPitch);
-	public abstract void updateRoll(float newRoll);
-	public abstract void updateYaw(float newYaw) ;
+	public abstract void updatePitch(float newPitch, float setPointPitch);
+	public abstract void updateRoll(float newRoll, float setPointRoll);
+	public abstract void updateYaw(float newYaw, float setPointYaw) ;
 	public abstract void updateX(float newX);
 	public abstract void updateY(float newY);
 	public abstract void updateZ(float newZ);

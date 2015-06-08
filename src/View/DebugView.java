@@ -328,22 +328,25 @@ public class DebugView extends View {
 	}
 
 	@Override
-	public void updatePitch(float newPitch) {
+	public void updatePitch(float newPitch, float setPointPitch) {
 		if(pitchtime>displayTime) pitchData.removeValue("pitch", (Integer)(pitchtime-displayTime));
 		pitchData.addValue(newPitch, "pitch", (Integer)(++pitchtime));
+		pitchSetPointData.addValue(setPointPitch, "setPoint", (Integer)(pitchtime));
 
 	}
 
 	@Override
-	public void updateRoll(float newRoll) {
+	public void updateRoll(float newRoll, float setPointRoll) {
 		if(rolltime>displayTime) rollData.removeValue("roll", (Integer)(rolltime-displayTime));
 		rollData.addValue(newRoll, "roll", (Integer)(++rolltime));
+		rollSetPointData.addValue(setPointRoll, "setPoint", (Integer)(rolltime));
 	}
 
 	@Override
-	public void updateYaw(float newYaw) {
+	public void updateYaw(float newYaw, float setPointYaw) {
 		if(yawtime>displayTime) yawData.removeValue("yaw", (Integer)(yawtime-displayTime));
 		yawData.addValue(newYaw, "yaw", (Integer)(++yawtime));
+		yawSetPointData.addValue(setPointYaw, "setPoint", (Integer)(yawtime));
 	}
 
 	@Override

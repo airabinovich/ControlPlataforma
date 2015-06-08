@@ -10,17 +10,52 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class TwoWaySerialComm{
 	private PlatformModel model;
     private SerialWriter sw;
+    private static int portIndex = -1;
+    private static ArrayList<String> puertosLinux;
+    private static ArrayList<String> puertosWin;
+    private HashMap<String, ArrayList<String>> puertos;
+    private static String OS;
+    
     public TwoWaySerialComm(PlatformModel model){
         this.model = model;
+        
+        OS = System.getProperty("os.name").toLowerCase();
+        System.out.println("Sistema:"+OS);
+        
+        puertos = new HashMap<String,ArrayList<String>>();
+        
+        puertosLinux = new ArrayList<String>();
+        puertosLinux.add("/dev/ttyUSB0");
+        puertosLinux.add("/dev/ttyACM0");
+        puertos.put("linux", puertosLinux);
+        
+        puertosWin = new ArrayList<String>();
+        for(int i = 0; i < 20; i++){
+        	puertosWin.add("COM"+Integer.toString(i));
+        }
+        
+        puertos.put("win", puertosWin);
     }
     
-    public void connect ( String portName ) throws Exception{  
+    private String getNextPort(){
+    	portIndex++;
     	try{
-    		CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
+    		System.out.println("puerto entregado: "+puertos.get(OS).get(portIndex));
+    		return puertos.get(OS).get(portIndex);
+    	}catch(IndexOutOfBoundsException ex){
+    		return null;
+    	}
+	}
+    
+    private CommPortIdentifier tryConnection(String port) throws Exception{
+    	CommPortIdentifier portIdentifier;
+    	try{
+    		portIdentifier = CommPortIdentifier.getPortIdentifier(port);
         	try{
         		CommPort commPort = portIdentifier.open(this.getClass().getName(),2000);
         		if ( commPort instanceof SerialPort ){
@@ -30,12 +65,33 @@ public class TwoWaySerialComm{
         			OutputStream out = serialPort.getOutputStream();
         			(new Thread(new SerialReader(in, model))).start();
         			 sw = new SerialWriter(out,model);
-        			
         		}
-//        		else{Pmodel.notifyError("Error: Only serial ports are handled by this example.",true);}
-        	}catch(gnu.io.PortInUseException e){System.out.println("Puerto Ocupado!!");/*Pmodel.notifyError("Error: Port is currently in use",true);*/}
-    	}catch(gnu.io.NoSuchPortException e){System.out.println("Puerto no conectado!!");/*Pmodel.notifyError("Error: Port is not connected",true);*/}
+        	}catch(gnu.io.PortInUseException e){
+        		System.out.println("Puerto Ocupado!!");
+        		return null;
+        	}
+    	}catch(gnu.io.NoSuchPortException e){
+    		System.out.println("Puerto no conectado!!");
+    		return null;
+    	}
+    	return portIdentifier;
    }
+    
+    public void connect(){
+    	String nextPort;
+    	CommPortIdentifier portIdentifier = null;
+		try {
+			while(portIdentifier == null){
+				nextPort = getNextPort();
+				nextPort.equals(nextPort);
+				portIdentifier = tryConnection(nextPort);
+			}
+		} catch (NullPointerException e){
+			System.out.println("Nos quedamos sin puertos");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
 
     public void sendMessage(){
     	sw.sendMessage();

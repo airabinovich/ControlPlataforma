@@ -31,7 +31,7 @@ public class UserView extends View {
 
 
 	@Override
-	public void updatePitch(float newPitch) {
+	public void updatePitch(float newPitch, float setPointPitch) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -39,7 +39,7 @@ public class UserView extends View {
 
 
 	@Override
-	public void updateRoll(float newRoll) {
+	public void updateRoll(float newRoll, float setPointRoll) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -47,7 +47,7 @@ public class UserView extends View {
 
 
 	@Override
-	public void updateYaw(float newYaw) {
+	public void updateYaw(float newYaw, float setPointYaw) {
 		// TODO Auto-generated method stub
 		
 	}

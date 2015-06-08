@@ -32,11 +32,7 @@ public class Controller implements ModelObserver{
 		getPointListener = new GetPointButtonListener();
 		
 		comunicacion = new TwoWaySerialComm(this.model);
-		try {
-			comunicacion.connect("COM15");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		comunicacion.connect();
 		model.attachObserver(this);
 	}
 	
@@ -50,44 +46,10 @@ public class Controller implements ModelObserver{
 		setPIDListener = new SetPIDButtonListener();
 		
 		comunicacion = new TwoWaySerialComm(this.model);
-		try {
-			comunicacion.connect("COM15");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		comunicacion.connect();
 		model.attachObserver(this);
 	}
 	
-	/**
-	 * @param pitch
-	 * @deprecated
-	 */
-	public void UpdatePitch(float pitch){
-		view.updatePitch(pitch);
-	}
-	/**
-	 * @param pitch
-	 * @deprecated
-	 */
-	public void UpdateYaw(float yaw){
-		view.updateYaw(yaw);
-	}
-	/**
-	 * @param pitch
-	 * @deprecated
-	 */
-	public void UpdateRoll(float roll){
-		view.updateRoll(roll);
-	}
-	
-//	public void UpdateCurrentPos(float x,float y,float z,float yaw,float pitch,float roll){
-//		view.updateX(x);
-//		view.updateY(y);
-//		view.updateZ(z);
-//		view.updateYaw(yaw);
-//		view.updatePitch(pitch);
-//		view.updateRoll(roll);
-//	}
 	class PIDButtonListener implements ActionListener{
 
 		public PIDButtonListener() {
@@ -180,19 +142,19 @@ public class Controller implements ModelObserver{
 	}
 	@Override
 	public void updatePitch(float newPitch) {
-		view.updatePitch(newPitch);
+		view.updatePitch(newPitch, model.getPitchPoint());
 		
 	}
 
 	@Override
 	public void updateRoll(float newRoll) {
-		view.updateRoll(newRoll);
+		view.updateRoll(newRoll, model.getRollPoint());
 		
 	}
 
 	@Override
 	public void updateYaw(float newYaw) {
-		view.updateYaw(newYaw);
+		view.updateYaw(newYaw, model.getYawPoint());
 		
 	}
 
