@@ -25,6 +25,7 @@ public class TwoWaySerialComm{
         this.model = model;
         
         OS = System.getProperty("os.name").toLowerCase();
+        OS = OS.substring(0, OS.indexOf(' '));
         System.out.println("Sistema:"+OS);
         
         puertos = new HashMap<String,ArrayList<String>>();
@@ -39,7 +40,7 @@ public class TwoWaySerialComm{
         	puertosWin.add("COM"+Integer.toString(i));
         }
         
-        puertos.put("win", puertosWin);
+        puertos.put("windows", puertosWin);
     }
     
     private String getNextPort(){
@@ -119,15 +120,20 @@ public class TwoWaySerialComm{
             			System.out.println(aux);
             		}
             		else if(a=='('){           		
-	            		aux.replace("(", "");
-	            		aux.replace(")", "");
-	        			//System.out.println(aux);
-	        			
+	            		aux= aux.replace("(","");
+	            		aux= aux.replace(")","");
+	            		
 	        			String delims = ",";
 	        			String[] tokens = aux.split(delims);
+	        			float[] values = new float[tokens.length];
+	        		
+	        			for (int i=0; i<tokens.length;i++){
+	        				values[i]=Float.parseFloat(tokens[i]);
+	        			}
 	            			//"(;d1;d2.....;)"
-	        			//System.out.println(tokens[0]+","+tokens[1]+","+tokens[2]+","+tokens[3]+","+tokens[4]+","+tokens[5]);
-	        			model.setCurrent(Float.parseFloat(tokens[0]), Float.parseFloat(tokens[1]),Float.parseFloat(tokens[2]),Float.parseFloat(tokens[3]),Float.parseFloat(tokens[4]),Float.parseFloat(tokens[5]));
+	        			
+	        			model.setCurrent(values[0],values[1],values[2],values[3],values[4],values[5],
+	        								values[6],values[7],values[8],values[9],values[10],values[11]);
             		}
             	}
             }catch (IOException e){}            

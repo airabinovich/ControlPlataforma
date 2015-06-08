@@ -175,5 +175,10 @@ public class Controller implements ModelObserver{
 		view.updateZ(newZ);
 		
 	}
+
+	@Override
+	public void updateMotorAngles(float[] newMotorAngles) {
+		view.updateMotorAngles(newMotorAngles);		
+	}
 }
 

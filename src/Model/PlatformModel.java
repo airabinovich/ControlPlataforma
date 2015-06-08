@@ -10,7 +10,7 @@ public class PlatformModel  {
 					kpRoll,kiRoll,kdRoll;
 	private float pitchPoint, yawPoint, rollPoint;
 	private float pitchCurrent, yawCurrent, rollCurrent;
-	
+	private float motorAnglesCurrent[]= new float[6];
 	private ArrayList<ModelObserver> observers;
 	
 	public PlatformModel(){
@@ -56,11 +56,18 @@ public class PlatformModel  {
 		this.rollPoint = rollPoint;
 	}
 	
-	public void setCurrent(float xCurrent,float yCurrent,float zCurrent, float yawCurrent,float pitchCurrent, float rollCurrent){
+	public void setCurrent(float xCurrent,float yCurrent,float zCurrent, float yawCurrent,float pitchCurrent, float rollCurrent,
+							float m0, float m1, float m2, float m3, float m4, float m5){
 		//TODO implementar x,y,z
 		this.pitchCurrent = pitchCurrent;
 		this.yawCurrent = yawCurrent;
 		this.rollCurrent = rollCurrent;
+		this.motorAnglesCurrent[0]=m0;
+		this.motorAnglesCurrent[1]=m1;
+		this.motorAnglesCurrent[2]=m2;
+		this.motorAnglesCurrent[3]=m3;
+		this.motorAnglesCurrent[4]=m4;
+		this.motorAnglesCurrent[5]=m5;
 		notifyObservers();
 	}
 	public boolean isPIDActive(){
@@ -133,6 +140,7 @@ public class PlatformModel  {
 			o.updatePitch(pitchCurrent);
 			o.updateRoll(rollCurrent);
 			o.updateYaw(yawCurrent);
+			o.updateMotorAngles(motorAnglesCurrent);
 			//TODO: agregar implementacion de X,Y y Z
 		}
 	}

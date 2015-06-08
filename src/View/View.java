@@ -2,6 +2,7 @@ package View;
 
 import java.awt.Font;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -186,5 +187,6 @@ public abstract class View extends JFrame{
 	public abstract void updateX(float newX);
 	public abstract void updateY(float newY);
 	public abstract void updateZ(float newZ);
+	public abstract void updateMotorAngles(float newMotorAngles[]);
 
 }

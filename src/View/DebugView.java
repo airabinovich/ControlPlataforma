@@ -5,6 +5,7 @@ import java.awt.Container;
 import java.awt.Point;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -376,6 +377,13 @@ public class DebugView extends View {
 		pitchSlider.setValue((int)(pitch*10));
 		yawSlider.setValue((int)(yaw*10));
 		rollSlider.setValue((int)(roll*10));
+	}
+
+	@Override
+	public void updateMotorAngles(float newMotorAngles[]) {
+		for (int i=0; i<newMotorAngles.length;i++){
+			motorValue[i].setText(Float.toString(newMotorAngles[i]));
+		}
 	}
 	
 }

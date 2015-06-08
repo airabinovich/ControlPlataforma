@@ -1,5 +1,7 @@
 package View;
 
+import java.util.ArrayList;
+
 import Controller.Controller;
 import Model.PlatformModel;
 
@@ -48,6 +50,13 @@ public class UserView extends View {
 
 	@Override
 	public void updateYaw(float newYaw, float setPointYaw) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void updateMotorAngles(float newMotorAngles[]) {
 		// TODO Auto-generated method stub
 		
 	}
