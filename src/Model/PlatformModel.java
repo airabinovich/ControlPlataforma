@@ -9,16 +9,22 @@ public class PlatformModel  {
 					kpYaw,kiYaw,kdYaw,
 					kpRoll,kiRoll,kdRoll;
 	private float pitchPoint, yawPoint, rollPoint;
+	private float xPoint, yPoint, zPoint;
+	private static final float 	xOrig = 110,
+								yOrig = 110,
+								zOrig = 240;
 	private float pitchCurrent, yawCurrent, rollCurrent;
 	private float motorAnglesCurrent[]= new float[6];
 	private ArrayList<ModelObserver> observers;
 	
 	public PlatformModel(){
 		PID = false;
-		kpPitch = kpYaw = kpRoll = 1;
+		kpPitch = kpYaw = kpRoll = 0.05f;
 		kiPitch = kiYaw = kiRoll = 0;
 		kdPitch = kdYaw = kdRoll = 0;
-		
+		xPoint=xOrig;
+		yPoint= yOrig;
+		zPoint= zOrig;
 		observers = new ArrayList<ModelObserver>();
 	}
 	public PlatformModel(boolean isControlled,float kp,float ki,float kd){
@@ -26,7 +32,9 @@ public class PlatformModel  {
 		kpPitch = kpYaw = kpRoll = kp;
 		kiPitch = kiYaw = kiRoll = ki;
 		kdPitch = kdYaw = kdRoll = kd;
-		
+		xPoint=xOrig;
+		yPoint= yOrig;
+		zPoint= zOrig;
 		observers = new ArrayList<ModelObserver>();
 	}
 	
@@ -116,13 +124,13 @@ public class PlatformModel  {
 		return rollPoint;
 	}
 	public float getX(){
-		return 0;
+		return xPoint;
 	}
 	public float getY(){
-		return 0;
+		return yPoint;
 	}
 	public float getZ(){
-		return 0;
+		return zPoint;
 	}
 	
 	public void attachObserver(ModelObserver o){
