@@ -19,7 +19,7 @@ import Model.ModelObserver;
 import Model.PlatformModel;
 
 
-public abstract class View extends JFrame implements ModelObserver{
+public abstract class View extends JFrame{
 	private static final long serialVersionUID = 1L;
 	protected JFreeChart pitchGraph,yawGraph,rollGraph;
 	protected DefaultCategoryDataset pitchData,yawData,rollData;
@@ -32,13 +32,9 @@ public abstract class View extends JFrame implements ModelObserver{
 							newKpYaw,newKiYaw,newKdYaw,
 							newKpRoll,newKiRoll,newKdRoll;
 	
-	protected PlatformModel model;
 	
 	public View(String title, PlatformModel model){
 		super(title);
-		
-		this.model = model;
-		model.attachObserver(this);
 		
 		pitchtime = 0;
 		yawtime = 0;
@@ -178,4 +174,12 @@ public abstract class View extends JFrame implements ModelObserver{
 	public void addGetPIDButtonListener(ActionListener listener){
 		getPIDButton.addActionListener(listener);
 	}
+	
+	public abstract void updatePitch(float newPitch);
+	public abstract void updateRoll(float newRoll);
+	public abstract void updateYaw(float newYaw) ;
+	public abstract void updateX(float newX);
+	public abstract void updateY(float newY);
+	public abstract void updateZ(float newZ);
+
 }

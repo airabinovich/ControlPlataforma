@@ -2,9 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="/home/ariel/Programas/jfreechart-1.0.19/lib/jcommon-1.0.23.jar"/>
-	<classpathentry exported="true" kind="lib" path="/home/ariel/Programas/jfreechart-1.0.19/lib/jfreechart-1.0.19.jar"/>
-	<classpathentry exported="true" kind="lib" path="/home/ariel/Programas/jfreechart-1.0.19/lib/jfreechart-1.0.19-swt.jar"/>
-	<classpathentry kind="lib" path="/home/ariel/Programas/mfz-rxtx-2.2-20081207-win-x64/RXTXcomm.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Juanjo/Documents/Juanjo/Facu/PPS/ControlPlataforma/lib/jfreechart-1.0.19/lib/jcommon-1.0.23.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Juanjo/Documents/Juanjo/Facu/PPS/ControlPlataforma/lib/jfreechart-1.0.19/lib/jfreechart-1.0.19.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Juanjo/Documents/Juanjo/Facu/PPS/ControlPlataforma/lib/jfreechart-1.0.19/lib/jfreechart-1.0.19-swt.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

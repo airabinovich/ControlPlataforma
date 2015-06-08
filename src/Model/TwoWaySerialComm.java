@@ -25,7 +25,7 @@ public class TwoWaySerialComm{
         		CommPort commPort = portIdentifier.open(this.getClass().getName(),2000);
         		if ( commPort instanceof SerialPort ){
         			SerialPort serialPort = (SerialPort) commPort;
-        			serialPort.setSerialPortParams(11520,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);          
+        			serialPort.setSerialPortParams(115200,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);          
         			InputStream in = serialPort.getInputStream();
         			OutputStream out = serialPort.getOutputStream();
         			(new Thread(new SerialReader(in, model))).start();
@@ -55,32 +55,30 @@ public class TwoWaySerialComm{
         	BufferedReader buffer= new BufferedReader(new InputStreamReader(in));
             try {
             	if (buffer.ready()){
-            		while(buffer.read() != '('){
-            			
+            		int a;
+            		while(((a=buffer.read()) != '(') && (a!='/')){
             		}
-            		String aux = '('+buffer.readLine();
-        			//System.out.println(aux);
-        			
-        			String delims = "(,)";
-        			String[] tokens = aux.split(delims);
-        			if(tokens[tokens.length-1].equals(")") && tokens.length==10){
-            			//"(;d1;d2.....;)"
-        				System.out.println(tokens[0]+","+tokens[1]+","+tokens[2]+","+tokens[3]+","+tokens[4]+","+tokens[5]);
-        				model.setCurrent(Float.parseFloat(tokens[0]), Float.parseFloat(tokens[1]),Float.parseFloat(tokens[2]),Float.parseFloat(tokens[3]),Float.parseFloat(tokens[4]),Float.parseFloat(tokens[5]));
-        				
-        			}
-
+            		String aux = buffer.readLine();
+            		if (a=='/'){
+            			System.out.println(aux);
+            		}
+            		else if(a=='('){           		
+	            		aux.replace("(", "");
+	            		aux.replace(")", "");
+	        			//System.out.println(aux);
+	        			
+	        			String delims = ",";
+	        			String[] tokens = aux.split(delims);
+	            			//"(;d1;d2.....;)"
+	        			//System.out.println(tokens[0]+","+tokens[1]+","+tokens[2]+","+tokens[3]+","+tokens[4]+","+tokens[5]);
+	        			model.setCurrent(Float.parseFloat(tokens[0]), Float.parseFloat(tokens[1]),Float.parseFloat(tokens[2]),Float.parseFloat(tokens[3]),Float.parseFloat(tokens[4]),Float.parseFloat(tokens[5]));
+            		}
             	}
             }catch (IOException e){}            
         }
 		public void run() {
 			while(true){
 				readData();
-				try {
-					Thread.sleep(10);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
 			}
 		}
  	}

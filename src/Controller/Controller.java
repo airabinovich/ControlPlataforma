@@ -3,6 +3,7 @@ package Controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import Model.ModelObserver;
 import Model.PlatformModel;
 import Model.GradoDeLibertad;
 import Model.TwoWaySerialComm;
@@ -10,7 +11,7 @@ import View.DebugView;
 import View.UserView;
 import View.View;
 
-public class Controller{
+public class Controller implements ModelObserver{
 	protected View view;
 	protected PlatformModel model;
 	private PIDButtonListener PIDListener;
@@ -32,11 +33,11 @@ public class Controller{
 		
 		comunicacion = new TwoWaySerialComm(this.model);
 		try {
-			comunicacion.connect("/dev/ttyACM0");
+			comunicacion.connect("COM15");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		model.attachObserver(this);
 	}
 	
 	public Controller(PlatformModel model, boolean DebugMode){
@@ -49,6 +50,12 @@ public class Controller{
 		setPIDListener = new SetPIDButtonListener();
 		
 		comunicacion = new TwoWaySerialComm(this.model);
+		try {
+			comunicacion.connect("COM15");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		model.attachObserver(this);
 	}
 	
 	/**
@@ -169,6 +176,41 @@ public class Controller{
 			}
 			
 		}
+		
+	}
+	@Override
+	public void updatePitch(float newPitch) {
+		view.updatePitch(newPitch);
+		
+	}
+
+	@Override
+	public void updateRoll(float newRoll) {
+		view.updateRoll(newRoll);
+		
+	}
+
+	@Override
+	public void updateYaw(float newYaw) {
+		view.updateYaw(newYaw);
+		
+	}
+
+	@Override
+	public void updateX(float newX) {
+		view.updateX(newX);
+		
+	}
+
+	@Override
+	public void updateY(float newY) {
+		view.updateY(newY);
+		
+	}
+
+	@Override
+	public void updateZ(float newZ) {
+		view.updateZ(newZ);
 		
 	}
 }

@@ -61,6 +61,7 @@ public class PlatformModel  {
 		this.pitchCurrent = pitchCurrent;
 		this.yawCurrent = yawCurrent;
 		this.rollCurrent = rollCurrent;
+		notifyObservers();
 	}
 	public boolean isPIDActive(){
 		return PID;
@@ -127,9 +128,12 @@ public class PlatformModel  {
 		observers.remove(o);
 	}
 	
-	public void notifyObservers(){
+	private void notifyObservers(){
 		for(ModelObserver o : observers){
-			//TODO notificar observadores
+			o.updatePitch(pitchCurrent);
+			o.updateRoll(rollCurrent);
+			o.updateYaw(yawCurrent);
+			//TODO: agregar implementacion de X,Y y Z
 		}
 	}
 }
