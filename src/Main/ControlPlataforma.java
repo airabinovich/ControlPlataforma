@@ -19,23 +19,23 @@ public class ControlPlataforma {
 		model = new PlatformModel();
 		controller = new Controller(model, true);
 		Scanner teclado = new Scanner(System.in);
-//		int i = 0;
-//		Random r = new Random();
-//		while(true){
-//			
-//			try {
-//				Thread.sleep(50);
-//				controller.UpdatePitch(r.nextFloat());
-//				controller.UpdateYaw(r.nextFloat());
-//				controller.UpdateRoll(r.nextFloat());
-//				i = (i+1)%10;
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			
-//			
-//		}
+		int i = 0;
+		Random r = new Random();
+		while(true){
+			
+			try {
+				Thread.sleep(50);
+				controller.updatePitch(r.nextFloat()-0.5f);
+				controller.updateYaw(r.nextFloat()-0.5f);
+				controller.updateRoll(r.nextFloat()-0.5f);
+				i = (i+1)%10;
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+		}
 	}
 
 }
