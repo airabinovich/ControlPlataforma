@@ -12,7 +12,13 @@ import javax.swing.JTextField;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.category.CategoryItemRenderer;
+import org.jfree.chart.renderer.category.DefaultCategoryItemRenderer;
+import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.ui.RectangleEdge;
 
 import Controller.Controller;
 import Model.GradoDeLibertad;
@@ -33,6 +39,9 @@ public abstract class View extends JFrame{
 	protected JTextField 	newKpPitch,newKiPitch,newKdPitch,
 							newKpYaw,newKiYaw,newKdYaw,
 							newKpRoll,newKiRoll,newKdRoll;
+	protected CategoryPlot pitchPlot,yawPlot,rollPlot;
+	protected DefaultCategoryItemRenderer yawRenderer,pitchRenderer,rollRenderer,
+										  yawSetPointRenderer,rollSetPointRenderer,pitchSetPointRenderer;
 	
 	
 	public View(String title, PlatformModel model){
@@ -42,9 +51,11 @@ public abstract class View extends JFrame{
 		yawtime = 0;
 		rolltime = 0;
 		
+		
 		pitchData = new DefaultCategoryDataset();
 		yawData = new DefaultCategoryDataset();
 		rollData = new DefaultCategoryDataset();
+		
 		
 		pitchSetPointData = new DefaultCategoryDataset();
 		yawSetPointData = new DefaultCategoryDataset();
@@ -54,15 +65,45 @@ public abstract class View extends JFrame{
 		yawGraph = ChartFactory.createLineChart("Yaw", "Tiempo", "Grados", yawData);
 		rollGraph = ChartFactory.createLineChart("Roll", "Tiempo", "Grados", rollData);
 		
-		pitchGraph.removeLegend();
-		yawGraph.removeLegend();
-		rollGraph.removeLegend();
+		yawPlot= yawGraph.getCategoryPlot();
+		pitchPlot= pitchGraph.getCategoryPlot();
+		rollPlot= rollGraph.getCategoryPlot();
+		
+		pitchGraph.getLegend().setPosition(RectangleEdge.RIGHT);
+		yawGraph.getLegend().setPosition(RectangleEdge.RIGHT);
+		rollGraph.getLegend().setPosition(RectangleEdge.RIGHT);
+//		pitchGraph.removeLegend();
+//		yawGraph.removeLegend();
+//		rollGraph.removeLegend();
 		
 		Font font = new Font("Plot", Font.PLAIN, 7);
 		
-		pitchGraph.getCategoryPlot().getDomainAxis().setTickLabelFont(font);
-		yawGraph.getCategoryPlot().getDomainAxis().setTickLabelFont(font);
-		rollGraph.getCategoryPlot().getDomainAxis().setTickLabelFont(font);
+		pitchPlot.getDomainAxis().setTickLabelFont(font);
+		yawPlot.getDomainAxis().setTickLabelFont(font);
+		rollPlot.getDomainAxis().setTickLabelFont(font);
+		
+		yawPlot.setDataset(1,yawSetPointData);
+		pitchPlot.setDataset(1,pitchSetPointData);
+		rollPlot.setDataset(1,rollSetPointData);
+		
+		yawRenderer= new DefaultCategoryItemRenderer();
+		yawRenderer.setSeriesShapesVisible(0, false);
+		pitchRenderer= new DefaultCategoryItemRenderer();
+		pitchRenderer.setSeriesShapesVisible(0, false);
+		rollRenderer= new DefaultCategoryItemRenderer();
+		rollRenderer.setSeriesShapesVisible(0, false);
+		yawSetPointRenderer= new DefaultCategoryItemRenderer();
+		yawSetPointRenderer.setSeriesShapesVisible(0, false);
+		pitchSetPointRenderer= new DefaultCategoryItemRenderer();
+		pitchSetPointRenderer.setSeriesShapesVisible(0, false);
+		rollSetPointRenderer= new DefaultCategoryItemRenderer();
+		rollSetPointRenderer.setSeriesShapesVisible(0, false);
+		yawPlot.setRenderer(0,yawRenderer);
+		yawPlot.setRenderer(1,yawSetPointRenderer);
+		pitchPlot.setRenderer(0,pitchRenderer);
+		pitchPlot.setRenderer(1,pitchSetPointRenderer);
+		rollPlot.setRenderer(0,rollRenderer);
+		rollPlot.setRenderer(1,rollSetPointRenderer);
 		
 		pidButton = new JButton("PID");
 		setPointButton = new JButton("Set Point");
