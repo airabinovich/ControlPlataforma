@@ -334,10 +334,12 @@ public class DebugView extends View {
 		if(pitchtime>displayTime){
 			pitchData.removeValue("pitch", (Integer)(pitchtime-displayTime));
 			pitchSetPointData.removeValue("setPoint", (Integer)(pitchtime-displayTime));
+			pitchErrorData.removeValue("Error", (Integer)(pitchtime-displayTime));
 		
 		}
 		pitchData.addValue(newPitch, "pitch", (Integer)(++pitchtime));
 		pitchSetPointData.addValue(setPointPitch, "setPoint", (Integer)(pitchtime));
+		pitchErrorData.addValue(setPointPitch-newPitch,"Error",(Integer)(pitchtime));
 
 	}
 
@@ -346,9 +348,11 @@ public class DebugView extends View {
 		if(rolltime>displayTime){
 			rollData.removeValue("roll", (Integer)(rolltime-displayTime));
 			rollSetPointData.removeValue("setPoint", (Integer)(rolltime-displayTime));
+			rollErrorData.removeValue("Error", (Integer)(rolltime-displayTime));
 		}
 		rollData.addValue(newRoll, "roll", (Integer)(++rolltime));
 		rollSetPointData.addValue(setPointRoll, "setPoint", (Integer)(rolltime));
+		rollErrorData.addValue(setPointRoll-newRoll,"Error",(Integer)(rolltime));
 	}
 
 	@Override
@@ -356,9 +360,11 @@ public class DebugView extends View {
 		if(yawtime>displayTime){
 			yawData.removeValue("yaw", (Integer)(yawtime-displayTime));
 			yawSetPointData.removeValue("setPoint", (Integer)(yawtime-displayTime));
+			yawErrorData.removeValue("Error", (Integer)(yawtime-displayTime));
 		}
 		yawData.addValue(newYaw, "yaw", (Integer)(++yawtime));
 		yawSetPointData.addValue(setPointYaw, "setPoint", (Integer)(yawtime));
+		yawErrorData.addValue(setPointYaw-newYaw,"Error",(Integer)(yawtime));
 	}
 
 	@Override

@@ -31,6 +31,7 @@ public abstract class View extends JFrame{
 	protected JFreeChart pitchGraph,yawGraph,rollGraph;
 	protected DefaultCategoryDataset pitchData,yawData,rollData;
 	protected DefaultCategoryDataset pitchSetPointData,yawSetPointData,rollSetPointData;
+	protected DefaultCategoryDataset pitchErrorData,yawErrorData,rollErrorData;
 	protected JSlider pitchSlider, yawSlider, rollSlider;
 	protected static int pitchtime,yawtime,rolltime;
 	protected Controller controller;
@@ -40,8 +41,9 @@ public abstract class View extends JFrame{
 							newKpYaw,newKiYaw,newKdYaw,
 							newKpRoll,newKiRoll,newKdRoll;
 	protected CategoryPlot pitchPlot,yawPlot,rollPlot;
-	protected DefaultCategoryItemRenderer yawRenderer,pitchRenderer,rollRenderer,
-										  yawSetPointRenderer,rollSetPointRenderer,pitchSetPointRenderer;
+	protected DefaultCategoryItemRenderer yawRenderer,pitchRenderer,rollRenderer;
+	protected DefaultCategoryItemRenderer yawSetPointRenderer,rollSetPointRenderer,pitchSetPointRenderer;
+	protected DefaultCategoryItemRenderer yawErrorRenderer,rollErrorRenderer,pitchErrorRenderer;
 	
 	
 	public View(String title, PlatformModel model){
@@ -60,6 +62,10 @@ public abstract class View extends JFrame{
 		pitchSetPointData = new DefaultCategoryDataset();
 		yawSetPointData = new DefaultCategoryDataset();
 		rollSetPointData = new DefaultCategoryDataset();
+		
+		pitchErrorData = new DefaultCategoryDataset();
+		yawErrorData = new DefaultCategoryDataset();
+		rollErrorData = new DefaultCategoryDataset();
 		
 		pitchGraph = ChartFactory.createLineChart("Pitch", "Tiempo", "Grados", pitchData);
 		yawGraph = ChartFactory.createLineChart("Yaw", "Tiempo", "Grados", yawData);
@@ -86,6 +92,10 @@ public abstract class View extends JFrame{
 		pitchPlot.setDataset(1,pitchSetPointData);
 		rollPlot.setDataset(1,rollSetPointData);
 		
+		yawPlot.setDataset(2,yawErrorData);
+		pitchPlot.setDataset(2,pitchErrorData);
+		rollPlot.setDataset(2,rollErrorData);
+		
 		yawRenderer= new DefaultCategoryItemRenderer();
 		yawRenderer.setSeriesShapesVisible(0, false);
 		pitchRenderer= new DefaultCategoryItemRenderer();
@@ -98,12 +108,22 @@ public abstract class View extends JFrame{
 		pitchSetPointRenderer.setSeriesShapesVisible(0, false);
 		rollSetPointRenderer= new DefaultCategoryItemRenderer();
 		rollSetPointRenderer.setSeriesShapesVisible(0, false);
+		yawErrorRenderer= new DefaultCategoryItemRenderer();
+		yawErrorRenderer.setSeriesShapesVisible(0, false);
+		pitchErrorRenderer= new DefaultCategoryItemRenderer();
+		pitchErrorRenderer.setSeriesShapesVisible(0, false);
+		rollErrorRenderer= new DefaultCategoryItemRenderer();
+		rollErrorRenderer.setSeriesShapesVisible(0, false);
+		
 		yawPlot.setRenderer(0,yawRenderer);
 		yawPlot.setRenderer(1,yawSetPointRenderer);
+		yawPlot.setRenderer(2,yawErrorRenderer);
 		pitchPlot.setRenderer(0,pitchRenderer);
 		pitchPlot.setRenderer(1,pitchSetPointRenderer);
+		pitchPlot.setRenderer(2,pitchErrorRenderer);
 		rollPlot.setRenderer(0,rollRenderer);
 		rollPlot.setRenderer(1,rollSetPointRenderer);
+		rollPlot.setRenderer(2,rollErrorRenderer);
 		
 		pidButton = new JButton("PID");
 		setPointButton = new JButton("Set Point");
