@@ -23,7 +23,7 @@ import org.jfree.chart.ChartPanel;
 import Model.PlatformModel;
 
 public class DebugView extends View {
-	private static final int displayTime = 10;
+	private static final int displayTime = 30;
 	private static final long serialVersionUID = 1L;
 	private Container contentpane;
 	private JLabel	pitchText, yawText, rollText,

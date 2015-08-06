@@ -18,6 +18,7 @@ import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.renderer.category.DefaultCategoryItemRenderer;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.ui.RectangleEdge;
 
 import Controller.Controller;
 import Model.GradoDeLibertad;
@@ -68,7 +69,9 @@ public abstract class View extends JFrame{
 		pitchPlot= pitchGraph.getCategoryPlot();
 		rollPlot= rollGraph.getCategoryPlot();
 		
-		
+		pitchGraph.getLegend().setPosition(RectangleEdge.RIGHT);
+		yawGraph.getLegend().setPosition(RectangleEdge.RIGHT);
+		rollGraph.getLegend().setPosition(RectangleEdge.RIGHT);
 //		pitchGraph.removeLegend();
 //		yawGraph.removeLegend();
 //		rollGraph.removeLegend();
