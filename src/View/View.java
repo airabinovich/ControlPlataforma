@@ -39,7 +39,8 @@ public abstract class View extends JFrame{
 							newKpYaw,newKiYaw,newKdYaw,
 							newKpRoll,newKiRoll,newKdRoll;
 	protected CategoryPlot pitchPlot,yawPlot,rollPlot;
-	
+	protected DefaultCategoryItemRenderer yawRenderer,pitchRenderer,rollRenderer,
+										  yawSetPointRenderer,rollSetPointRenderer,pitchSetPointRenderer;
 	
 	
 	public View(String title, PlatformModel model){
@@ -68,9 +69,9 @@ public abstract class View extends JFrame{
 		rollPlot= rollGraph.getCategoryPlot();
 		
 		
-		pitchGraph.removeLegend();
-		yawGraph.removeLegend();
-		rollGraph.removeLegend();
+//		pitchGraph.removeLegend();
+//		yawGraph.removeLegend();
+//		rollGraph.removeLegend();
 		
 		Font font = new Font("Plot", Font.PLAIN, 7);
 		
@@ -81,7 +82,25 @@ public abstract class View extends JFrame{
 		yawPlot.setDataset(1,yawSetPointData);
 		pitchPlot.setDataset(1,pitchSetPointData);
 		rollPlot.setDataset(1,rollSetPointData);
-		yawPlot.setRenderer(1,new DefaultCategoryItemRenderer());
+		
+		yawRenderer= new DefaultCategoryItemRenderer();
+		yawRenderer.setSeriesShapesVisible(0, false);
+		pitchRenderer= new DefaultCategoryItemRenderer();
+		pitchRenderer.setSeriesShapesVisible(0, false);
+		rollRenderer= new DefaultCategoryItemRenderer();
+		rollRenderer.setSeriesShapesVisible(0, false);
+		yawSetPointRenderer= new DefaultCategoryItemRenderer();
+		yawSetPointRenderer.setSeriesShapesVisible(0, false);
+		pitchSetPointRenderer= new DefaultCategoryItemRenderer();
+		pitchSetPointRenderer.setSeriesShapesVisible(0, false);
+		rollSetPointRenderer= new DefaultCategoryItemRenderer();
+		rollSetPointRenderer.setSeriesShapesVisible(0, false);
+		yawPlot.setRenderer(0,yawRenderer);
+		yawPlot.setRenderer(1,yawSetPointRenderer);
+		pitchPlot.setRenderer(0,pitchRenderer);
+		pitchPlot.setRenderer(1,pitchSetPointRenderer);
+		rollPlot.setRenderer(0,rollRenderer);
+		rollPlot.setRenderer(1,rollSetPointRenderer);
 		
 		pidButton = new JButton("PID");
 		setPointButton = new JButton("Set Point");
