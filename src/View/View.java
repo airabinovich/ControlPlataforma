@@ -2,7 +2,6 @@ package View;
 
 import java.awt.Font;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -13,16 +12,12 @@ import javax.swing.JTextField;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.renderer.category.DefaultCategoryItemRenderer;
-import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.ui.RectangleEdge;
 
 import Controller.Controller;
 import Model.GradoDeLibertad;
-import Model.ModelObserver;
 import Model.PlatformModel;
 
 

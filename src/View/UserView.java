@@ -1,11 +1,14 @@
 package View;
 
-import java.util.ArrayList;
-
-import Controller.Controller;
 import Model.PlatformModel;
 
 public class UserView extends View {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6539339348338170290L;
+
 
 	public UserView(PlatformModel model) {
 		super("Control de Plataforma", model);

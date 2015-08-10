@@ -56,7 +56,7 @@ public class DebugView extends View {
 		fondo.setBackground(Color.lightGray);
 		
 		this.setResizable(false);
-		this.setBounds(200, 50, 1000, 700);
+		this.setBounds(200, 50, 1200, 700);
 		
 		int alto = this.getHeight(), ancho = this.getWidth();
 	

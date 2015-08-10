@@ -1,11 +1,9 @@
 package Main;
 
 import java.util.Random;
-import java.util.Scanner;
 
 import Controller.Controller;
 import Model.PlatformModel;
-import Model.TwoWaySerialComm;
 
 public class ControlPlataforma {
 
@@ -18,7 +16,6 @@ public class ControlPlataforma {
 		
 		model = new PlatformModel();
 		controller = new Controller(model, true);
-		Scanner teclado = new Scanner(System.in);
 		int i = 0;
 		Random r = new Random();
 		while(true){
@@ -30,7 +27,6 @@ public class ControlPlataforma {
 				controller.updateRoll(r.nextFloat()-0.5f);
 				i = (i+1)%10;
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
