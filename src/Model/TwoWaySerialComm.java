@@ -25,7 +25,7 @@ public class TwoWaySerialComm{
         this.model = model;
         
         OS = System.getProperty("os.name").toLowerCase();
-        OS = OS.substring(0, OS.indexOf(' '));
+        OS = OS.substring(0, OS.indexOf(' ') > 0 ? OS.indexOf(' ') : OS.length());
         System.out.println("Sistema:"+OS);
         
         puertos = new HashMap<String,ArrayList<String>>();
