@@ -180,5 +180,9 @@ public class Controller implements ModelObserver{
 	public void updateMotorAngles(float[] newMotorAngles) {
 		view.updateMotorAngles(newMotorAngles);		
 	}
+	@Override
+	public void updateLoadCells(float newCellValues[]){
+		view.updateLoadCells(newCellValues);		
+	}
 }
 

@@ -16,6 +16,7 @@ public class PlatformModel  {
 	private float pitchCurrent, yawCurrent, rollCurrent;
 	private float xCurrent, yCurrent, zCurrent;
 	private float motorAnglesCurrent[]= new float[6];
+	private float cellValuesCurrent[]= new float[6];
 	private ArrayList<ModelObserver> observers;
 	
 	public PlatformModel(){
@@ -70,7 +71,7 @@ public class PlatformModel  {
 	
 	public void setCurrent(float xCurrent,float yCurrent,float zCurrent, float yawCurrent,float pitchCurrent, float rollCurrent,
 							float m0, float m1, float m2, float m3, float m4, float m5){
-		//TODO implementar x,y,z
+		//TODO implementar x,y,z y celdas de carga
 		this.pitchCurrent = pitchCurrent;
 		this.yawCurrent = yawCurrent;
 		this.rollCurrent = rollCurrent;
@@ -80,6 +81,7 @@ public class PlatformModel  {
 		this.motorAnglesCurrent[3]=m3;
 		this.motorAnglesCurrent[4]=m4;
 		this.motorAnglesCurrent[5]=m5;
+		
 		notifyObservers();
 	}
 	public boolean isPIDActive(){
@@ -174,6 +176,7 @@ public class PlatformModel  {
 			o.updateX(xCurrent);
 			o.updateY(yCurrent);
 			o.updateZ(zCurrent);
+			o.updateLoadCells(cellValuesCurrent);
 			//TODO: agregar implementacion de X,Y y Z
 		}
 	}

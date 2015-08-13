@@ -237,6 +237,7 @@ public class DebugView extends View {
 	public void updateMotorAngles(float newMotorAngles[]) {
 		for (int i=0; i<newMotorAngles.length;i++){
 			motorValueYPR[i].setText(Float.toString(newMotorAngles[i]));
+			motorValueXYZ[i].setText(Float.toString(newMotorAngles[i]));
 		}
 	}
 	

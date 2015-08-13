@@ -9,5 +9,6 @@ public interface ModelObserver {
 	void updateY(float newY);
 	void updateZ(float newZ);
 	void updateMotorAngles(float[] newMotorAngles);
+	void updateLoadCells(float[] newCellValues);
 
 }

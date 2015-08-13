@@ -2,7 +2,9 @@ package View;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GradientPaint;
 import java.awt.Point;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -25,9 +27,23 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.dial.DialBackground;
+import org.jfree.chart.plot.dial.DialCap;
+import org.jfree.chart.plot.dial.DialPlot;
+import org.jfree.chart.plot.dial.DialTextAnnotation;
+import org.jfree.chart.plot.dial.DialValueIndicator;
+import org.jfree.chart.plot.dial.StandardDialFrame;
+import org.jfree.chart.plot.dial.StandardDialRange;
+import org.jfree.chart.plot.dial.StandardDialScale;
 import org.jfree.chart.renderer.category.DefaultCategoryItemRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.general.DatasetChangeListener;
+import org.jfree.data.general.DatasetGroup;
+import org.jfree.data.general.DefaultValueDataset;
+import org.jfree.data.general.ValueDataset;
+import org.jfree.ui.GradientPaintTransformType;
 import org.jfree.ui.RectangleEdge;
+import org.jfree.ui.StandardGradientPaintTransformer;
 
 import Controller.Controller;
 import Model.GradoDeLibertad;
@@ -60,6 +76,7 @@ public abstract class View extends JFrame{
 	protected JPanel topPanel;
 	protected JPanel YPRPanel;
 	protected JPanel XYZPanel;
+	protected JPanel LoadCellsPanel;
 	private JLabel	pitchText, yawText, rollText,activeYPRPIDText;
 	protected Point firstVariableBase ,secondVariableBase ,thirdVariableBase ,midPoint;
 	protected int alto,ancho;
@@ -70,6 +87,7 @@ public abstract class View extends JFrame{
 	protected JButton pidButtonXYZ, getPointButtonXYZ, setPointButtonXYZ;
 	
 	protected JFreeChart xGraph,yGraph,zGraph;
+	
 	protected DefaultCategoryDataset xData,yData,zData;
 	protected DefaultCategoryDataset xSetPointData,ySetPointData,zSetPointData;
 	protected DefaultCategoryDataset xErrorData,yErrorData,zErrorData;
@@ -78,6 +96,9 @@ public abstract class View extends JFrame{
 	protected DefaultCategoryItemRenderer yRenderer,xRenderer,zRenderer;
 	protected DefaultCategoryItemRenderer ySetPointRenderer,zSetPointRenderer,xSetPointRenderer;
 	protected DefaultCategoryItemRenderer yErrorRenderer,zErrorRenderer,xErrorRenderer;
+	
+	protected DialPlot LoadCellsPlot[];
+	protected JFreeChart LoadCellsGraph[];
 	public View(String title, PlatformModel model){
 		super(title);
 	}
@@ -100,578 +121,631 @@ public abstract class View extends JFrame{
 		XYZPanel.setBounds(this.getBounds());
 		XYZPanel.setLayout( null );
 		
+		LoadCellsPanel = new JPanel();
+		LoadCellsPanel.setBounds(this.getBounds());
+		LoadCellsPanel.setLayout( null );
+		
 		topPanel.setBounds(this.getBounds());
 		tabbedPane = new JTabbedPane();
 		
 		createYPRTab();
 		createXYZTab();
-		
+		createLoadCellsTab();
 		tabbedPane.addTab("YPR",YPRPanel);
 		tabbedPane.addTab("XYZ",XYZPanel);
+		tabbedPane.addTab("LoadCells",LoadCellsPanel);
 		topPanel.add(tabbedPane,BorderLayout.CENTER);
 		
 		this.setVisible(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 	}
-private void createXYZGraphs(){
-	xtime = 0;
-	ytime = 0;
-	ztime = 0;
-	
-	xData = new DefaultCategoryDataset();
-	yData = new DefaultCategoryDataset();
-	zData = new DefaultCategoryDataset();
+	private void createXYZGraphs(){
+		xtime = 0;
+		ytime = 0;
+		ztime = 0;
 		
-	xSetPointData = new DefaultCategoryDataset();
-	ySetPointData = new DefaultCategoryDataset();
-	zSetPointData = new DefaultCategoryDataset();
-	
-	xErrorData = new DefaultCategoryDataset();
-	yErrorData = new DefaultCategoryDataset();
-	zErrorData = new DefaultCategoryDataset();
-	
-	xGraph = ChartFactory.createLineChart("X", "Tiempo", "Grados", xData);
-	yGraph = ChartFactory.createLineChart("Y", "Tiempo", "Grados", yData);
-	zGraph = ChartFactory.createLineChart("Z", "Tiempo", "Grados", zData);
-	
-	yPlot= yGraph.getCategoryPlot();
-	xPlot= xGraph.getCategoryPlot();
-	zPlot= zGraph.getCategoryPlot();
-	
-	xGraph.getLegend().setPosition(RectangleEdge.RIGHT);
-	yGraph.getLegend().setPosition(RectangleEdge.RIGHT);
-	zGraph.getLegend().setPosition(RectangleEdge.RIGHT);
-	
-	Font font = new Font("Plot", Font.PLAIN, 7);
-	
-	xPlot.getDomainAxis().setTickLabelFont(font);
-	yPlot.getDomainAxis().setTickLabelFont(font);
-	zPlot.getDomainAxis().setTickLabelFont(font);
-	
-	yPlot.setDataset(1,ySetPointData);
-	xPlot.setDataset(1,xSetPointData);
-	zPlot.setDataset(1,zSetPointData);
-	
-	yPlot.setDataset(2,yErrorData);
-	xPlot.setDataset(2,xErrorData);
-	zPlot.setDataset(2,zErrorData);
-	
-	yRenderer= new DefaultCategoryItemRenderer();
-	yRenderer.setSeriesShapesVisible(0, false);
-	xRenderer= new DefaultCategoryItemRenderer();
-	xRenderer.setSeriesShapesVisible(0, false);
-	zRenderer= new DefaultCategoryItemRenderer();
-	zRenderer.setSeriesShapesVisible(0, false);
-	ySetPointRenderer= new DefaultCategoryItemRenderer();
-	ySetPointRenderer.setSeriesShapesVisible(0, false);
-	xSetPointRenderer= new DefaultCategoryItemRenderer();
-	xSetPointRenderer.setSeriesShapesVisible(0, false);
-	zSetPointRenderer= new DefaultCategoryItemRenderer();
-	zSetPointRenderer.setSeriesShapesVisible(0, false);
-	yErrorRenderer= new DefaultCategoryItemRenderer();
-	yErrorRenderer.setSeriesShapesVisible(0, false);
-	xErrorRenderer= new DefaultCategoryItemRenderer();
-	xErrorRenderer.setSeriesShapesVisible(0, false);
-	zErrorRenderer= new DefaultCategoryItemRenderer();
-	zErrorRenderer.setSeriesShapesVisible(0, false);
-	
-	yPlot.setRenderer(0,yRenderer);
-	yPlot.setRenderer(1,ySetPointRenderer);
-	yPlot.setRenderer(2,yErrorRenderer);
-	xPlot.setRenderer(0,xRenderer);
-	xPlot.setRenderer(1,xSetPointRenderer);
-	xPlot.setRenderer(2,xErrorRenderer);
-	zPlot.setRenderer(0,zRenderer);
-	zPlot.setRenderer(1,zSetPointRenderer);
-	zPlot.setRenderer(2,zErrorRenderer);
-}
-private void createYPRGraphs(){
-	pitchtime = 0;
-	yawtime = 0;
-	rolltime = 0;
-	
-	pitchData = new DefaultCategoryDataset();
-	yawData = new DefaultCategoryDataset();
-	rollData = new DefaultCategoryDataset();
+		xData = new DefaultCategoryDataset();
+		yData = new DefaultCategoryDataset();
+		zData = new DefaultCategoryDataset();
+			
+		xSetPointData = new DefaultCategoryDataset();
+		ySetPointData = new DefaultCategoryDataset();
+		zSetPointData = new DefaultCategoryDataset();
 		
-	pitchSetPointData = new DefaultCategoryDataset();
-	yawSetPointData = new DefaultCategoryDataset();
-	rollSetPointData = new DefaultCategoryDataset();
+		xErrorData = new DefaultCategoryDataset();
+		yErrorData = new DefaultCategoryDataset();
+		zErrorData = new DefaultCategoryDataset();
+		
+		xGraph = ChartFactory.createLineChart("X", "Tiempo", "Grados", xData);
+		yGraph = ChartFactory.createLineChart("Y", "Tiempo", "Grados", yData);
+		zGraph = ChartFactory.createLineChart("Z", "Tiempo", "Grados", zData);
+		
+		yPlot= yGraph.getCategoryPlot();
+		xPlot= xGraph.getCategoryPlot();
+		zPlot= zGraph.getCategoryPlot();
+		
+		xGraph.getLegend().setPosition(RectangleEdge.RIGHT);
+		yGraph.getLegend().setPosition(RectangleEdge.RIGHT);
+		zGraph.getLegend().setPosition(RectangleEdge.RIGHT);
+		
+		Font font = new Font("Plot", Font.PLAIN, 7);
+		
+		xPlot.getDomainAxis().setTickLabelFont(font);
+		yPlot.getDomainAxis().setTickLabelFont(font);
+		zPlot.getDomainAxis().setTickLabelFont(font);
+		
+		yPlot.setDataset(1,ySetPointData);
+		xPlot.setDataset(1,xSetPointData);
+		zPlot.setDataset(1,zSetPointData);
+		
+		yPlot.setDataset(2,yErrorData);
+		xPlot.setDataset(2,xErrorData);
+		zPlot.setDataset(2,zErrorData);
+		
+		yRenderer= new DefaultCategoryItemRenderer();
+		yRenderer.setSeriesShapesVisible(0, false);
+		xRenderer= new DefaultCategoryItemRenderer();
+		xRenderer.setSeriesShapesVisible(0, false);
+		zRenderer= new DefaultCategoryItemRenderer();
+		zRenderer.setSeriesShapesVisible(0, false);
+		ySetPointRenderer= new DefaultCategoryItemRenderer();
+		ySetPointRenderer.setSeriesShapesVisible(0, false);
+		xSetPointRenderer= new DefaultCategoryItemRenderer();
+		xSetPointRenderer.setSeriesShapesVisible(0, false);
+		zSetPointRenderer= new DefaultCategoryItemRenderer();
+		zSetPointRenderer.setSeriesShapesVisible(0, false);
+		yErrorRenderer= new DefaultCategoryItemRenderer();
+		yErrorRenderer.setSeriesShapesVisible(0, false);
+		xErrorRenderer= new DefaultCategoryItemRenderer();
+		xErrorRenderer.setSeriesShapesVisible(0, false);
+		zErrorRenderer= new DefaultCategoryItemRenderer();
+		zErrorRenderer.setSeriesShapesVisible(0, false);
+		
+		yPlot.setRenderer(0,yRenderer);
+		yPlot.setRenderer(1,ySetPointRenderer);
+		yPlot.setRenderer(2,yErrorRenderer);
+		xPlot.setRenderer(0,xRenderer);
+		xPlot.setRenderer(1,xSetPointRenderer);
+		xPlot.setRenderer(2,xErrorRenderer);
+		zPlot.setRenderer(0,zRenderer);
+		zPlot.setRenderer(1,zSetPointRenderer);
+		zPlot.setRenderer(2,zErrorRenderer);
+	}
+	private void createLoadCellsGraphs(){			
+		 LoadCellsPlot= new DialPlot[6];
+		 LoadCellsGraph= new JFreeChart[6];
+		 DialTextAnnotation dialtextannotation = new DialTextAnnotation("Force");
+		 dialtextannotation.setFont(new Font("Dialog", 1, 14));
+		 dialtextannotation.setRadius(0.69999999999999996D);
+		 StandardDialScale standarddialscale = new StandardDialScale(-500, 500, -120D, -300D, 10D, 4);
+		 standarddialscale.setMajorTickIncrement(50);
+		 standarddialscale.setMinorTickCount(4);
+		 standarddialscale.setTickRadius(0.88D);
+		 standarddialscale.setTickLabelOffset(0.14999999999999999D);
+		 standarddialscale.setTickLabelFont(new Font("Dialog", 0, 14));
+		 GradientPaint gradientpaint = new GradientPaint(new Point(), new Color(255, 255, 255), new Point(), new Color(170, 170, 220));
+			DialBackground dialbackground = new DialBackground(gradientpaint);
+			dialbackground.setGradientPaintTransformer(new StandardGradientPaintTransformer(GradientPaintTransformType.VERTICAL));
+		 for (int i=0;i<LoadCellsPlot.length;i++){
+			 	
+			    LoadCellsPlot[i] = new DialPlot();
+			    LoadCellsPlot[i].setDataset(new DefaultValueDataset(0));
+			    LoadCellsPlot[i].setDialFrame(new StandardDialFrame());
+				LoadCellsPlot[i].setBackground(new DialBackground());
+				LoadCellsPlot[i].addLayer(dialtextannotation);
+				DialValueIndicator dialvalueindicator = new DialValueIndicator(0);
+				LoadCellsPlot[i].addLayer(dialvalueindicator);				
+				LoadCellsPlot[i].addScale(0, standarddialscale);
+				LoadCellsPlot[i].addPointer(new org.jfree.chart.plot.dial.DialPointer.Pin());
+				DialCap dialcap = new DialCap();
+				LoadCellsPlot[i].setCap(dialcap);			
+				LoadCellsPlot[i].setBackground(dialbackground);
+				LoadCellsGraph[i] = new JFreeChart("Load Cell "+ (i+1), LoadCellsPlot[i]);
+		 }
+	}
 	
-	pitchErrorData = new DefaultCategoryDataset();
-	yawErrorData = new DefaultCategoryDataset();
-	rollErrorData = new DefaultCategoryDataset();
+	private void createYPRGraphs(){
+		pitchtime = 0;
+		yawtime = 0;
+		rolltime = 0;
+		
+		pitchData = new DefaultCategoryDataset();
+		yawData = new DefaultCategoryDataset();
+		rollData = new DefaultCategoryDataset();
+			
+		pitchSetPointData = new DefaultCategoryDataset();
+		yawSetPointData = new DefaultCategoryDataset();
+		rollSetPointData = new DefaultCategoryDataset();
+		
+		pitchErrorData = new DefaultCategoryDataset();
+		yawErrorData = new DefaultCategoryDataset();
+		rollErrorData = new DefaultCategoryDataset();
+		
+		pitchGraph = ChartFactory.createLineChart("Pitch", "Tiempo", "Grados", pitchData);
+		yawGraph = ChartFactory.createLineChart("Yaw", "Tiempo", "Grados", yawData);
+		rollGraph = ChartFactory.createLineChart("Roll", "Tiempo", "Grados", rollData);
+		
+		yawPlot= yawGraph.getCategoryPlot();
+		pitchPlot= pitchGraph.getCategoryPlot();
+		rollPlot= rollGraph.getCategoryPlot();
+		
+		pitchGraph.getLegend().setPosition(RectangleEdge.RIGHT);
+		yawGraph.getLegend().setPosition(RectangleEdge.RIGHT);
+		rollGraph.getLegend().setPosition(RectangleEdge.RIGHT);
+		
+		Font font = new Font("Plot", Font.PLAIN, 7);
+		
+		pitchPlot.getDomainAxis().setTickLabelFont(font);
+		yawPlot.getDomainAxis().setTickLabelFont(font);
+		rollPlot.getDomainAxis().setTickLabelFont(font);
+		
+		yawPlot.setDataset(1,yawSetPointData);
+		pitchPlot.setDataset(1,pitchSetPointData);
+		rollPlot.setDataset(1,rollSetPointData);
+		
+		yawPlot.setDataset(2,yawErrorData);
+		pitchPlot.setDataset(2,pitchErrorData);
+		rollPlot.setDataset(2,rollErrorData);
+		
+		yawRenderer= new DefaultCategoryItemRenderer();
+		yawRenderer.setSeriesShapesVisible(0, false);
+		pitchRenderer= new DefaultCategoryItemRenderer();
+		pitchRenderer.setSeriesShapesVisible(0, false);
+		rollRenderer= new DefaultCategoryItemRenderer();
+		rollRenderer.setSeriesShapesVisible(0, false);
+		yawSetPointRenderer= new DefaultCategoryItemRenderer();
+		yawSetPointRenderer.setSeriesShapesVisible(0, false);
+		pitchSetPointRenderer= new DefaultCategoryItemRenderer();
+		pitchSetPointRenderer.setSeriesShapesVisible(0, false);
+		rollSetPointRenderer= new DefaultCategoryItemRenderer();
+		rollSetPointRenderer.setSeriesShapesVisible(0, false);
+		yawErrorRenderer= new DefaultCategoryItemRenderer();
+		yawErrorRenderer.setSeriesShapesVisible(0, false);
+		pitchErrorRenderer= new DefaultCategoryItemRenderer();
+		pitchErrorRenderer.setSeriesShapesVisible(0, false);
+		rollErrorRenderer= new DefaultCategoryItemRenderer();
+		rollErrorRenderer.setSeriesShapesVisible(0, false);
+		
+		yawPlot.setRenderer(0,yawRenderer);
+		yawPlot.setRenderer(1,yawSetPointRenderer);
+		yawPlot.setRenderer(2,yawErrorRenderer);
+		pitchPlot.setRenderer(0,pitchRenderer);
+		pitchPlot.setRenderer(1,pitchSetPointRenderer);
+		pitchPlot.setRenderer(2,pitchErrorRenderer);
+		rollPlot.setRenderer(0,rollRenderer);
+		rollPlot.setRenderer(1,rollSetPointRenderer);
+		rollPlot.setRenderer(2,rollErrorRenderer);
+	}
+	protected void createYPRTab(){
+			createYPRGraphs();
+			JPanel fondo = new JPanel();
+			fondo.setBackground(Color.lightGray);
+			
+			pidButtonYPR = new JButton("PID");
+			setPointButtonYPR = new JButton("Set Point");
+			getPointButtonYPR = new JButton("Get Point");
 	
-	pitchGraph = ChartFactory.createLineChart("Pitch", "Tiempo", "Grados", pitchData);
-	yawGraph = ChartFactory.createLineChart("Yaw", "Tiempo", "Grados", yawData);
-	rollGraph = ChartFactory.createLineChart("Roll", "Tiempo", "Grados", rollData);
+			newPitch = new JTextField();
+			newYaw = new JTextField();
+			newRoll = new JTextField();
+			
+			JPanel	pitchPanel = new ChartPanel(pitchGraph),
+					yawPanel = new ChartPanel(yawGraph),
+					rollPanel = new ChartPanel(rollGraph);
+			
+			pitchPanel.setBounds(0, 0,  (int)(ancho*2/3), alto/3);
+			yawPanel.setBounds(0, alto/3, (int)(ancho*2/3), alto/3);
+			rollPanel.setBounds(0, 2*alto/3, (int)(ancho*2/3), alto/3);
+			
+			firstVariableBase = new Point(ancho * 6/9, 0);
+			secondVariableBase = new Point(ancho * 7/9, 0);
+			thirdVariableBase = new Point(ancho * 8/9,0);
+			midPoint = firstVariableBase;
+			
+			pitchText = new JLabel("Pitch:");
+			yawText = new JLabel("Yaw:");
+			rollText = new JLabel("Roll:");
+			
+			pitchText.setBounds(firstVariableBase.x + 5, firstVariableBase.y , 100, 30);
+			yawText.setBounds(secondVariableBase.x + 5, secondVariableBase.y, 100, 30);
+			rollText.setBounds(thirdVariableBase.x + 5, thirdVariableBase.y, 100, 30);
+			
+			pitchSlider = new JSlider(SwingConstants.VERTICAL, -100, 100, 0);
+			yawSlider = new JSlider(SwingConstants.VERTICAL, -100, 100, 0);
+			rollSlider = new JSlider(SwingConstants.VERTICAL, -100, 100, 0);
+			
+			pitchSlider.setBounds(firstVariableBase.x + 50, pitchText.getY() + pitchText.getHeight() + 5, 50, 250);
+			yawSlider.setBounds(secondVariableBase.x + 50, yawText.getY() + yawText.getHeight() + 5, 50, 250);
+			rollSlider.setBounds(thirdVariableBase.x + 50, rollText.getY() + rollText.getHeight() + 5, 50, 250);
+			
+			pitchSlider.setMajorTickSpacing(1);
+			pitchSlider.setPaintTicks(true);
+			pitchSlider.setPaintLabels(true);
+			
+			yawSlider.setMajorTickSpacing(1);
+			yawSlider.setPaintTicks(true);
+			yawSlider.setPaintLabels(true);
+			
+			rollSlider.setMajorTickSpacing(1);
+			rollSlider.setPaintTicks(true);
+			rollSlider.setPaintLabels(true);
+			
+			java.util.Hashtable<Integer,JLabel> labelTable = new java.util.Hashtable<Integer,JLabel>();
+			for(int i=-10;i<=10;i+=2){
+				labelTable.put(new Integer(i*10), new JLabel(Integer.toString(i)));
+			}
+			
+			pitchSlider.setLabelTable(labelTable);
+			yawSlider.setLabelTable(labelTable);
+			rollSlider.setLabelTable(labelTable);
+			
+			pitchSlider.setBackground(Color.lightGray);
+			yawSlider.setBackground(Color.lightGray);
+			rollSlider.setBackground(Color.lightGray);
+			
+			newPitch.setBounds(firstVariableBase.x + 10,pitchSlider.getY() + pitchSlider.getHeight() + 10 , 100, 30);
+			newYaw.setBounds(secondVariableBase.x +10 , yawSlider.getY() + yawSlider.getHeight() + 10, 100, 30);
+			newRoll.setBounds(thirdVariableBase.x +10,rollSlider.getY() + rollSlider.getHeight() + 10, 100, 30);
+			
+			newPitch.setText("0.0");
+			newYaw.setText("0.0");
+			newRoll.setText("0.0");
+			
+			newKpPitch = new JTextField();
+			newKiPitch = new JTextField();
+			newKdPitch = new JTextField();
+			newKpYaw = new JTextField();
+			newKiYaw = new JTextField();
+			newKdYaw = new JTextField();
+			newKpRoll = new JTextField();
+			newKiRoll = new JTextField();
+			newKdRoll = new JTextField();
+			
+			activeYPRPIDText = new JLabel("PID desactivado");		
+			
+			JSeparator 	separador1 = new JSeparator(SwingConstants.HORIZONTAL),
+						separador2 = new JSeparator(SwingConstants.VERTICAL),
+						separador3 = new JSeparator(SwingConstants.VERTICAL);
+			separador1.setBounds(ancho/2, newPitch.getY() + 40, ancho/2, 1);
+			separador2.setBounds(secondVariableBase.x, 0, 1, separador1.getY());
+			separador3.setBounds(thirdVariableBase.x, 0, 1, separador1.getY());
+			fondo.add(separador1);
+			fondo.add(separador2);
+			fondo.add(separador3);
+			
+			pidButtonYPR.setBounds(midPoint.x + 10, separador1.getY() + 10, 100, 30);
+			activeYPRPIDText.setBounds(pidButtonYPR.getX() + pidButtonYPR.getWidth() + 10, pidButtonYPR.getY(), 150,30);
+			
+			getPointButtonYPR.setBounds(midPoint.x + 10, pidButtonYPR.getY() + pidButtonYPR.getHeight() + 10, 100, 30);
+			setPointButtonYPR.setBounds(getPointButtonYPR.getX() + getPointButtonYPR.getWidth() + 10, getPointButtonYPR.getY(), 100, 30);
+			
+			YPRPanel.add(pitchPanel);
+			YPRPanel.add(yawPanel);
+			YPRPanel.add(rollPanel);
+			YPRPanel.add(newPitch);
+			YPRPanel.add(newYaw);
+			YPRPanel.add(newRoll);
+			YPRPanel.add(pidButtonYPR);
+			YPRPanel.add(setPointButtonYPR);
+			YPRPanel.add(getPointButtonYPR);
 	
-	yawPlot= yawGraph.getCategoryPlot();
-	pitchPlot= pitchGraph.getCategoryPlot();
-	rollPlot= rollGraph.getCategoryPlot();
+			YPRPanel.add(pitchText);
+			YPRPanel.add(yawText);
+			YPRPanel.add(rollText);
+			YPRPanel.add(pitchSlider);
+			YPRPanel.add(yawSlider);
+			YPRPanel.add(rollSlider);
+			YPRPanel.add(newKpPitch);
+			YPRPanel.add(newKiPitch);
+			YPRPanel.add(newKdPitch);
+			YPRPanel.add(newKpYaw);
+			YPRPanel.add(newKiYaw);
+			YPRPanel.add(newKdYaw);
+			YPRPanel.add(newKpRoll);
+			YPRPanel.add(newKiRoll);
+			YPRPanel.add(newKdRoll);
 	
-	pitchGraph.getLegend().setPosition(RectangleEdge.RIGHT);
-	yawGraph.getLegend().setPosition(RectangleEdge.RIGHT);
-	rollGraph.getLegend().setPosition(RectangleEdge.RIGHT);
+			YPRPanel.add(activeYPRPIDText);
+			YPRPanel.add(separador1);
+			YPRPanel.add(separador2);
+			YPRPanel.add(separador3);	
+			YPRPanel.add(fondo);
+			
+			
+			pitchSlider.addChangeListener(new ChangeListener(){
+	            @Override
+	            public void stateChanged(ChangeEvent e) {
+	                newPitch.setText(String.valueOf(pitchSlider.getValue()/10.));
+	            }
+	        });
+			
+	        newPitch.addKeyListener(new KeyAdapter(){
+	            @Override
+	            public void keyReleased(KeyEvent ke) {
+	            	if(ke.getKeyCode()==KeyEvent.VK_ENTER){
+		                String typed = newPitch.getText();
+		                System.out.println("ENTER PITCH: "+newPitch.getText());
+		                try{
+			                float value = Float.parseFloat(typed);
+			                pitchSlider.setValue(Math.round(value*10));
+		                }catch(NumberFormatException ex){
+		                	ex.printStackTrace();
+		                }
+	            	}else System.out.println("NO ENTER");
+	            }
+	        });
+	        
+	        yawSlider.addChangeListener(new ChangeListener(){
+	            @Override
+	            public void stateChanged(ChangeEvent e) {
+	                newYaw.setText(String.valueOf(yawSlider.getValue()/10.));
+	            }
+	        });
+			
+	        newYaw.addKeyListener(new KeyAdapter(){
+	            @Override
+	            public void keyReleased(KeyEvent ke) {
+	            	if(ke.getKeyCode()==KeyEvent.VK_ENTER){
+		                String typed = newYaw.getText();
+		                System.out.println("ENTER YAW: "+newYaw.getText());
+		                try{
+			                float value = Float.parseFloat(typed);
+			                yawSlider.setValue(Math.round(value*10));
+		                }catch(NumberFormatException ex){
+		                	ex.printStackTrace();
+		                }
+	            	}else System.out.println("NO ENTER");
+	            }
+	        });
+	        
+	        rollSlider.addChangeListener(new ChangeListener(){
+	            @Override
+	            public void stateChanged(ChangeEvent e) {
+	                newRoll.setText(String.valueOf(rollSlider.getValue()/10.));
+	            }
+	        });
+			
+	        newRoll.addKeyListener(new KeyAdapter(){
+	            @Override
+	            public void keyReleased(KeyEvent ke) {
+	            	if(ke.getKeyCode()==KeyEvent.VK_ENTER){
+		                String typed = newRoll.getText();
+		                System.out.println("ENTER ROLL: "+newRoll.getText());
+		                try{
+			                float value = Float.parseFloat(typed);
+			                rollSlider.setValue(Math.round(value*10));
+		                }catch(NumberFormatException ex){
+		                	ex.printStackTrace();
+		                }
+	            	}else System.out.println("NO ENTER");
+	            }
+	        });
+		
+		}
 	
-	Font font = new Font("Plot", Font.PLAIN, 7);
-	
-	pitchPlot.getDomainAxis().setTickLabelFont(font);
-	yawPlot.getDomainAxis().setTickLabelFont(font);
-	rollPlot.getDomainAxis().setTickLabelFont(font);
-	
-	yawPlot.setDataset(1,yawSetPointData);
-	pitchPlot.setDataset(1,pitchSetPointData);
-	rollPlot.setDataset(1,rollSetPointData);
-	
-	yawPlot.setDataset(2,yawErrorData);
-	pitchPlot.setDataset(2,pitchErrorData);
-	rollPlot.setDataset(2,rollErrorData);
-	
-	yawRenderer= new DefaultCategoryItemRenderer();
-	yawRenderer.setSeriesShapesVisible(0, false);
-	pitchRenderer= new DefaultCategoryItemRenderer();
-	pitchRenderer.setSeriesShapesVisible(0, false);
-	rollRenderer= new DefaultCategoryItemRenderer();
-	rollRenderer.setSeriesShapesVisible(0, false);
-	yawSetPointRenderer= new DefaultCategoryItemRenderer();
-	yawSetPointRenderer.setSeriesShapesVisible(0, false);
-	pitchSetPointRenderer= new DefaultCategoryItemRenderer();
-	pitchSetPointRenderer.setSeriesShapesVisible(0, false);
-	rollSetPointRenderer= new DefaultCategoryItemRenderer();
-	rollSetPointRenderer.setSeriesShapesVisible(0, false);
-	yawErrorRenderer= new DefaultCategoryItemRenderer();
-	yawErrorRenderer.setSeriesShapesVisible(0, false);
-	pitchErrorRenderer= new DefaultCategoryItemRenderer();
-	pitchErrorRenderer.setSeriesShapesVisible(0, false);
-	rollErrorRenderer= new DefaultCategoryItemRenderer();
-	rollErrorRenderer.setSeriesShapesVisible(0, false);
-	
-	yawPlot.setRenderer(0,yawRenderer);
-	yawPlot.setRenderer(1,yawSetPointRenderer);
-	yawPlot.setRenderer(2,yawErrorRenderer);
-	pitchPlot.setRenderer(0,pitchRenderer);
-	pitchPlot.setRenderer(1,pitchSetPointRenderer);
-	pitchPlot.setRenderer(2,pitchErrorRenderer);
-	rollPlot.setRenderer(0,rollRenderer);
-	rollPlot.setRenderer(1,rollSetPointRenderer);
-	rollPlot.setRenderer(2,rollErrorRenderer);
-}
-protected void createYPRTab(){
-		createYPRGraphs();
+	protected void createXYZTab(){	
+		createXYZGraphs();
 		JPanel fondo = new JPanel();
 		fondo.setBackground(Color.lightGray);
 		
-		pidButtonYPR = new JButton("PID");
-		setPointButtonYPR = new JButton("Set Point");
-		getPointButtonYPR = new JButton("Get Point");
-
-		newPitch = new JTextField();
-		newYaw = new JTextField();
-		newRoll = new JTextField();
+		pidButtonXYZ = new JButton("PID");
+		setPointButtonXYZ = new JButton("Set Point");
+		getPointButtonXYZ = new JButton("Get Point");
+	
+		newX = new JTextField();
+		newY = new JTextField();
+		newZ = new JTextField();
 		
-		JPanel	pitchPanel = new ChartPanel(pitchGraph),
-				yawPanel = new ChartPanel(yawGraph),
-				rollPanel = new ChartPanel(rollGraph);
+		JPanel	xPanel = new ChartPanel(xGraph),
+				yPanel = new ChartPanel(yGraph),
+				zPanel = new ChartPanel(zGraph);
 		
-		pitchPanel.setBounds(0, 0,  (int)(ancho*2/3), alto/3);
-		yawPanel.setBounds(0, alto/3, (int)(ancho*2/3), alto/3);
-		rollPanel.setBounds(0, 2*alto/3, (int)(ancho*2/3), alto/3);
+		xPanel.setBounds(0, 0,  (int)(ancho*2/3), alto/3);
+		yPanel.setBounds(0, alto/3, (int)(ancho*2/3), alto/3);
+		zPanel.setBounds(0, 2*alto/3, (int)(ancho*2/3), alto/3);
 		
 		firstVariableBase = new Point(ancho * 6/9, 0);
 		secondVariableBase = new Point(ancho * 7/9, 0);
 		thirdVariableBase = new Point(ancho * 8/9,0);
 		midPoint = firstVariableBase;
 		
-		pitchText = new JLabel("Pitch:");
-		yawText = new JLabel("Yaw:");
-		rollText = new JLabel("Roll:");
+		xText = new JLabel("X:");
+		yText = new JLabel("Y:");
+		zText = new JLabel("Z:");
 		
-		pitchText.setBounds(firstVariableBase.x + 5, firstVariableBase.y , 100, 30);
-		yawText.setBounds(secondVariableBase.x + 5, secondVariableBase.y, 100, 30);
-		rollText.setBounds(thirdVariableBase.x + 5, thirdVariableBase.y, 100, 30);
+		xText.setBounds(firstVariableBase.x + 5, firstVariableBase.y , 100, 30);
+		yText.setBounds(secondVariableBase.x + 5, secondVariableBase.y, 100, 30);
+		zText.setBounds(thirdVariableBase.x + 5, thirdVariableBase.y, 100, 30);
 		
-		pitchSlider = new JSlider(SwingConstants.VERTICAL, -100, 100, 0);
-		yawSlider = new JSlider(SwingConstants.VERTICAL, -100, 100, 0);
-		rollSlider = new JSlider(SwingConstants.VERTICAL, -100, 100, 0);
+		xSlider = new JSlider(SwingConstants.VERTICAL, -100, 100, 0);
+		ySlider = new JSlider(SwingConstants.VERTICAL, -100, 100, 0);
+		zSlider = new JSlider(SwingConstants.VERTICAL, -100, 100, 0);
 		
-		pitchSlider.setBounds(firstVariableBase.x + 50, pitchText.getY() + pitchText.getHeight() + 5, 50, 250);
-		yawSlider.setBounds(secondVariableBase.x + 50, yawText.getY() + yawText.getHeight() + 5, 50, 250);
-		rollSlider.setBounds(thirdVariableBase.x + 50, rollText.getY() + rollText.getHeight() + 5, 50, 250);
+		xSlider.setBounds(firstVariableBase.x + 50, xText.getY() + xText.getHeight() + 5, 50, 250);
+		ySlider.setBounds(secondVariableBase.x + 50, yText.getY() + yText.getHeight() + 5, 50, 250);
+		zSlider.setBounds(thirdVariableBase.x + 50, zText.getY() + zText.getHeight() + 5, 50, 250);
 		
-		pitchSlider.setMajorTickSpacing(1);
-		pitchSlider.setPaintTicks(true);
-		pitchSlider.setPaintLabels(true);
+		xSlider.setMajorTickSpacing(1);
+		xSlider.setPaintTicks(true);
+		xSlider.setPaintLabels(true);
 		
-		yawSlider.setMajorTickSpacing(1);
-		yawSlider.setPaintTicks(true);
-		yawSlider.setPaintLabels(true);
+		ySlider.setMajorTickSpacing(1);
+		ySlider.setPaintTicks(true);
+		ySlider.setPaintLabels(true);
 		
-		rollSlider.setMajorTickSpacing(1);
-		rollSlider.setPaintTicks(true);
-		rollSlider.setPaintLabels(true);
+		zSlider.setMajorTickSpacing(1);
+		zSlider.setPaintTicks(true);
+		zSlider.setPaintLabels(true);
 		
 		java.util.Hashtable<Integer,JLabel> labelTable = new java.util.Hashtable<Integer,JLabel>();
 		for(int i=-10;i<=10;i+=2){
 			labelTable.put(new Integer(i*10), new JLabel(Integer.toString(i)));
 		}
 		
-		pitchSlider.setLabelTable(labelTable);
-		yawSlider.setLabelTable(labelTable);
-		rollSlider.setLabelTable(labelTable);
+		xSlider.setLabelTable(labelTable);
+		ySlider.setLabelTable(labelTable);
+		zSlider.setLabelTable(labelTable);
 		
-		pitchSlider.setBackground(Color.lightGray);
-		yawSlider.setBackground(Color.lightGray);
-		rollSlider.setBackground(Color.lightGray);
+		xSlider.setBackground(Color.lightGray);
+		ySlider.setBackground(Color.lightGray);
+		zSlider.setBackground(Color.lightGray);
 		
-		newPitch.setBounds(firstVariableBase.x + 10,pitchSlider.getY() + pitchSlider.getHeight() + 10 , 100, 30);
-		newYaw.setBounds(secondVariableBase.x +10 , yawSlider.getY() + yawSlider.getHeight() + 10, 100, 30);
-		newRoll.setBounds(thirdVariableBase.x +10,rollSlider.getY() + rollSlider.getHeight() + 10, 100, 30);
+		newX.setBounds(firstVariableBase.x + 10,xSlider.getY() + xSlider.getHeight() + 10 , 100, 30);
+		newY.setBounds(secondVariableBase.x +10 , ySlider.getY() + ySlider.getHeight() + 10, 100, 30);
+		newZ.setBounds(thirdVariableBase.x +10,zSlider.getY() + zSlider.getHeight() + 10, 100, 30);
 		
-		newPitch.setText("0.0");
-		newYaw.setText("0.0");
-		newRoll.setText("0.0");
+		newX.setText("0.0");
+		newY.setText("0.0");
+		newZ.setText("0.0");
 		
-		newKpPitch = new JTextField();
-		newKiPitch = new JTextField();
-		newKdPitch = new JTextField();
-		newKpYaw = new JTextField();
-		newKiYaw = new JTextField();
-		newKdYaw = new JTextField();
-		newKpRoll = new JTextField();
-		newKiRoll = new JTextField();
-		newKdRoll = new JTextField();
+		newKpX = new JTextField();
+		newKiX = new JTextField();
+		newKdX = new JTextField();
+		newKpY = new JTextField();
+		newKiY = new JTextField();
+		newKdY = new JTextField();
+		newKpZ = new JTextField();
+		newKiZ = new JTextField();
+		newKdZ = new JTextField();
 		
-		activeYPRPIDText = new JLabel("PID desactivado");		
+		activeXYZPIDText = new JLabel("PID desactivado");		
 		
 		JSeparator 	separador1 = new JSeparator(SwingConstants.HORIZONTAL),
 					separador2 = new JSeparator(SwingConstants.VERTICAL),
 					separador3 = new JSeparator(SwingConstants.VERTICAL);
-		separador1.setBounds(ancho/2, newPitch.getY() + 40, ancho/2, 1);
+		separador1.setBounds(ancho/2, newX.getY() + 40, ancho/2, 1);
 		separador2.setBounds(secondVariableBase.x, 0, 1, separador1.getY());
 		separador3.setBounds(thirdVariableBase.x, 0, 1, separador1.getY());
 		fondo.add(separador1);
 		fondo.add(separador2);
 		fondo.add(separador3);
 		
-		pidButtonYPR.setBounds(midPoint.x + 10, separador1.getY() + 10, 100, 30);
-		activeYPRPIDText.setBounds(pidButtonYPR.getX() + pidButtonYPR.getWidth() + 10, pidButtonYPR.getY(), 150,30);
+		pidButtonXYZ.setBounds(midPoint.x + 10, separador1.getY() + 10, 100, 30);
+		activeXYZPIDText.setBounds(pidButtonXYZ.getX() + pidButtonXYZ.getWidth() + 10, pidButtonXYZ.getY(), 150,30);
 		
-		getPointButtonYPR.setBounds(midPoint.x + 10, pidButtonYPR.getY() + pidButtonYPR.getHeight() + 10, 100, 30);
-		setPointButtonYPR.setBounds(getPointButtonYPR.getX() + getPointButtonYPR.getWidth() + 10, getPointButtonYPR.getY(), 100, 30);
+		getPointButtonXYZ.setBounds(midPoint.x + 10, pidButtonXYZ.getY() + pidButtonYPR.getHeight() + 10, 100, 30);
+		setPointButtonXYZ.setBounds(getPointButtonXYZ.getX() + getPointButtonXYZ.getWidth() + 10, getPointButtonXYZ.getY(), 100, 30);
 		
-		YPRPanel.add(pitchPanel);
-		YPRPanel.add(yawPanel);
-		YPRPanel.add(rollPanel);
-		YPRPanel.add(newPitch);
-		YPRPanel.add(newYaw);
-		YPRPanel.add(newRoll);
-		YPRPanel.add(pidButtonYPR);
-		YPRPanel.add(setPointButtonYPR);
-		YPRPanel.add(getPointButtonYPR);
-
-		YPRPanel.add(pitchText);
-		YPRPanel.add(yawText);
-		YPRPanel.add(rollText);
-		YPRPanel.add(pitchSlider);
-		YPRPanel.add(yawSlider);
-		YPRPanel.add(rollSlider);
-		YPRPanel.add(newKpPitch);
-		YPRPanel.add(newKiPitch);
-		YPRPanel.add(newKdPitch);
-		YPRPanel.add(newKpYaw);
-		YPRPanel.add(newKiYaw);
-		YPRPanel.add(newKdYaw);
-		YPRPanel.add(newKpRoll);
-		YPRPanel.add(newKiRoll);
-		YPRPanel.add(newKdRoll);
-
-		YPRPanel.add(activeYPRPIDText);
-		YPRPanel.add(separador1);
-		YPRPanel.add(separador2);
-		YPRPanel.add(separador3);	
-		YPRPanel.add(fondo);
+		XYZPanel.add(xPanel);
+		XYZPanel.add(yPanel);
+		XYZPanel.add(zPanel);
+		XYZPanel.add(newX);
+		XYZPanel.add(newY);
+		XYZPanel.add(newZ);
+		XYZPanel.add(pidButtonXYZ);
+		XYZPanel.add(setPointButtonXYZ);
+		XYZPanel.add(getPointButtonXYZ);
+	
+		XYZPanel.add(xText);
+		XYZPanel.add(yText);
+		XYZPanel.add(zText);
+		XYZPanel.add(xSlider);
+		XYZPanel.add(ySlider);
+		XYZPanel.add(zSlider);
+		XYZPanel.add(newKpX);
+		XYZPanel.add(newKiX);
+		XYZPanel.add(newKdX);
+		XYZPanel.add(newKpY);
+		XYZPanel.add(newKiY);
+		XYZPanel.add(newKdY);
+		XYZPanel.add(newKpZ);
+		XYZPanel.add(newKiZ);
+		XYZPanel.add(newKdZ);
+	
+		XYZPanel.add(activeXYZPIDText);
+		XYZPanel.add(separador1);
+		XYZPanel.add(separador2);
+		XYZPanel.add(separador3);	
+		XYZPanel.add(fondo);
 		
 		
-		pitchSlider.addChangeListener(new ChangeListener(){
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                newPitch.setText(String.valueOf(pitchSlider.getValue()/10.));
-            }
-        });
+		xSlider.addChangeListener(new ChangeListener(){
+	        @Override
+	        public void stateChanged(ChangeEvent e) {
+	            newX.setText(String.valueOf(xSlider.getValue()/10.));
+	        }
+	    });
 		
-        newPitch.addKeyListener(new KeyAdapter(){
-            @Override
-            public void keyReleased(KeyEvent ke) {
-            	if(ke.getKeyCode()==KeyEvent.VK_ENTER){
-	                String typed = newPitch.getText();
-	                System.out.println("ENTER PITCH: "+newPitch.getText());
+	    newX.addKeyListener(new KeyAdapter(){
+	        @Override
+	        public void keyReleased(KeyEvent ke) {
+	        	if(ke.getKeyCode()==KeyEvent.VK_ENTER){
+	                String typed = newX.getText();
+	                System.out.println("ENTER X: "+newX.getText());
 	                try{
 		                float value = Float.parseFloat(typed);
-		                pitchSlider.setValue(Math.round(value*10));
+		                xSlider.setValue(Math.round(value*10));
 	                }catch(NumberFormatException ex){
 	                	ex.printStackTrace();
 	                }
-            	}else System.out.println("NO ENTER");
-            }
-        });
-        
-        yawSlider.addChangeListener(new ChangeListener(){
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                newYaw.setText(String.valueOf(yawSlider.getValue()/10.));
-            }
-        });
+	        	}else System.out.println("NO ENTER");
+	        }
+	    });
+	    
+	    ySlider.addChangeListener(new ChangeListener(){
+	        @Override
+	        public void stateChanged(ChangeEvent e) {
+	            newY.setText(String.valueOf(ySlider.getValue()/10.));
+	        }
+	    });
 		
-        newYaw.addKeyListener(new KeyAdapter(){
-            @Override
-            public void keyReleased(KeyEvent ke) {
-            	if(ke.getKeyCode()==KeyEvent.VK_ENTER){
-	                String typed = newYaw.getText();
-	                System.out.println("ENTER YAW: "+newYaw.getText());
+	    newY.addKeyListener(new KeyAdapter(){
+	        @Override
+	        public void keyReleased(KeyEvent ke) {
+	        	if(ke.getKeyCode()==KeyEvent.VK_ENTER){
+	                String typed = newY.getText();
+	                System.out.println("ENTER Y: "+newY.getText());
 	                try{
 		                float value = Float.parseFloat(typed);
-		                yawSlider.setValue(Math.round(value*10));
+		                ySlider.setValue(Math.round(value*10));
 	                }catch(NumberFormatException ex){
 	                	ex.printStackTrace();
 	                }
-            	}else System.out.println("NO ENTER");
-            }
-        });
-        
-        rollSlider.addChangeListener(new ChangeListener(){
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                newRoll.setText(String.valueOf(rollSlider.getValue()/10.));
-            }
-        });
+	        	}else System.out.println("NO ENTER");
+	        }
+	    });
+	    
+	    zSlider.addChangeListener(new ChangeListener(){
+	        @Override
+	        public void stateChanged(ChangeEvent e) {
+	            newZ.setText(String.valueOf(zSlider.getValue()/10.));
+	        }
+	    });
 		
-        newRoll.addKeyListener(new KeyAdapter(){
-            @Override
-            public void keyReleased(KeyEvent ke) {
-            	if(ke.getKeyCode()==KeyEvent.VK_ENTER){
-	                String typed = newRoll.getText();
-	                System.out.println("ENTER ROLL: "+newRoll.getText());
+	    newZ.addKeyListener(new KeyAdapter(){
+	        @Override
+	        public void keyReleased(KeyEvent ke) {
+	        	if(ke.getKeyCode()==KeyEvent.VK_ENTER){
+	                String typed = newZ.getText();
+	                System.out.println("ENTER Z: "+newZ.getText());
 	                try{
 		                float value = Float.parseFloat(typed);
-		                rollSlider.setValue(Math.round(value*10));
+		                zSlider.setValue(Math.round(value*10));
 	                }catch(NumberFormatException ex){
 	                	ex.printStackTrace();
 	                }
-            	}else System.out.println("NO ENTER");
-            }
-        });
+	        	}else System.out.println("NO ENTER");
+	        }
+	    });
 	
 	}
-
-protected void createXYZTab(){	
-	createXYZGraphs();
-	JPanel fondo = new JPanel();
-	fondo.setBackground(Color.lightGray);
 	
-	pidButtonXYZ = new JButton("PID");
-	setPointButtonXYZ = new JButton("Set Point");
-	getPointButtonXYZ = new JButton("Get Point");
-
-	newX = new JTextField();
-	newY = new JTextField();
-	newZ = new JTextField();
-	
-	JPanel	xPanel = new ChartPanel(xGraph),
-			yPanel = new ChartPanel(yGraph),
-			zPanel = new ChartPanel(zGraph);
-	
-	xPanel.setBounds(0, 0,  (int)(ancho*2/3), alto/3);
-	yPanel.setBounds(0, alto/3, (int)(ancho*2/3), alto/3);
-	zPanel.setBounds(0, 2*alto/3, (int)(ancho*2/3), alto/3);
-	
-	firstVariableBase = new Point(ancho * 6/9, 0);
-	secondVariableBase = new Point(ancho * 7/9, 0);
-	thirdVariableBase = new Point(ancho * 8/9,0);
-	midPoint = firstVariableBase;
-	
-	xText = new JLabel("X:");
-	yText = new JLabel("Y:");
-	zText = new JLabel("Z:");
-	
-	xText.setBounds(firstVariableBase.x + 5, firstVariableBase.y , 100, 30);
-	yText.setBounds(secondVariableBase.x + 5, secondVariableBase.y, 100, 30);
-	zText.setBounds(thirdVariableBase.x + 5, thirdVariableBase.y, 100, 30);
-	
-	xSlider = new JSlider(SwingConstants.VERTICAL, -100, 100, 0);
-	ySlider = new JSlider(SwingConstants.VERTICAL, -100, 100, 0);
-	zSlider = new JSlider(SwingConstants.VERTICAL, -100, 100, 0);
-	
-	xSlider.setBounds(firstVariableBase.x + 50, xText.getY() + xText.getHeight() + 5, 50, 250);
-	ySlider.setBounds(secondVariableBase.x + 50, yText.getY() + yText.getHeight() + 5, 50, 250);
-	zSlider.setBounds(thirdVariableBase.x + 50, zText.getY() + zText.getHeight() + 5, 50, 250);
-	
-	xSlider.setMajorTickSpacing(1);
-	xSlider.setPaintTicks(true);
-	xSlider.setPaintLabels(true);
-	
-	ySlider.setMajorTickSpacing(1);
-	ySlider.setPaintTicks(true);
-	ySlider.setPaintLabels(true);
-	
-	zSlider.setMajorTickSpacing(1);
-	zSlider.setPaintTicks(true);
-	zSlider.setPaintLabels(true);
-	
-	java.util.Hashtable<Integer,JLabel> labelTable = new java.util.Hashtable<Integer,JLabel>();
-	for(int i=-10;i<=10;i+=2){
-		labelTable.put(new Integer(i*10), new JLabel(Integer.toString(i)));
+	protected void createLoadCellsTab(){
+		createLoadCellsGraphs();
+		JPanel fondo = new JPanel();
+		fondo.setBackground(Color.lightGray);
+		LoadCellsPanel.add(fondo);
+		JPanel	cellPanel[]= new JPanel[6];
+		for (int i=0;i<LoadCellsPlot.length ;i++){
+			cellPanel[i] = new ChartPanel(LoadCellsGraph[i]);
+			cellPanel[i].setPreferredSize(new Dimension(200, 200));
+			cellPanel[i].setBounds((i%3)*(ancho/3),(i/3)*(alto/2),(int)((alto/2)*0.75),(int)((alto/2)*0.75));;
+			LoadCellsPanel.add(cellPanel[i]);
+		}
 	}
 	
-	xSlider.setLabelTable(labelTable);
-	ySlider.setLabelTable(labelTable);
-	zSlider.setLabelTable(labelTable);
 	
-	xSlider.setBackground(Color.lightGray);
-	ySlider.setBackground(Color.lightGray);
-	zSlider.setBackground(Color.lightGray);
-	
-	newX.setBounds(firstVariableBase.x + 10,xSlider.getY() + xSlider.getHeight() + 10 , 100, 30);
-	newY.setBounds(secondVariableBase.x +10 , ySlider.getY() + ySlider.getHeight() + 10, 100, 30);
-	newZ.setBounds(thirdVariableBase.x +10,zSlider.getY() + zSlider.getHeight() + 10, 100, 30);
-	
-	newX.setText("0.0");
-	newY.setText("0.0");
-	newZ.setText("0.0");
-	
-	newKpX = new JTextField();
-	newKiX = new JTextField();
-	newKdX = new JTextField();
-	newKpY = new JTextField();
-	newKiY = new JTextField();
-	newKdY = new JTextField();
-	newKpZ = new JTextField();
-	newKiZ = new JTextField();
-	newKdZ = new JTextField();
-	
-	activeXYZPIDText = new JLabel("PID desactivado");		
-	
-	JSeparator 	separador1 = new JSeparator(SwingConstants.HORIZONTAL),
-				separador2 = new JSeparator(SwingConstants.VERTICAL),
-				separador3 = new JSeparator(SwingConstants.VERTICAL);
-	separador1.setBounds(ancho/2, newX.getY() + 40, ancho/2, 1);
-	separador2.setBounds(secondVariableBase.x, 0, 1, separador1.getY());
-	separador3.setBounds(thirdVariableBase.x, 0, 1, separador1.getY());
-	fondo.add(separador1);
-	fondo.add(separador2);
-	fondo.add(separador3);
-	
-	pidButtonXYZ.setBounds(midPoint.x + 10, separador1.getY() + 10, 100, 30);
-	activeXYZPIDText.setBounds(pidButtonXYZ.getX() + pidButtonXYZ.getWidth() + 10, pidButtonXYZ.getY(), 150,30);
-	
-	getPointButtonXYZ.setBounds(midPoint.x + 10, pidButtonXYZ.getY() + pidButtonYPR.getHeight() + 10, 100, 30);
-	setPointButtonXYZ.setBounds(getPointButtonXYZ.getX() + getPointButtonXYZ.getWidth() + 10, getPointButtonXYZ.getY(), 100, 30);
-	
-	XYZPanel.add(xPanel);
-	XYZPanel.add(yPanel);
-	XYZPanel.add(zPanel);
-	XYZPanel.add(newX);
-	XYZPanel.add(newY);
-	XYZPanel.add(newZ);
-	XYZPanel.add(pidButtonXYZ);
-	XYZPanel.add(setPointButtonXYZ);
-	XYZPanel.add(getPointButtonXYZ);
-
-	XYZPanel.add(xText);
-	XYZPanel.add(yText);
-	XYZPanel.add(zText);
-	XYZPanel.add(xSlider);
-	XYZPanel.add(ySlider);
-	XYZPanel.add(zSlider);
-	XYZPanel.add(newKpX);
-	XYZPanel.add(newKiX);
-	XYZPanel.add(newKdX);
-	XYZPanel.add(newKpY);
-	XYZPanel.add(newKiY);
-	XYZPanel.add(newKdY);
-	XYZPanel.add(newKpZ);
-	XYZPanel.add(newKiZ);
-	XYZPanel.add(newKdZ);
-
-	XYZPanel.add(activeXYZPIDText);
-	XYZPanel.add(separador1);
-	XYZPanel.add(separador2);
-	XYZPanel.add(separador3);	
-	XYZPanel.add(fondo);
-	
-	
-	xSlider.addChangeListener(new ChangeListener(){
-        @Override
-        public void stateChanged(ChangeEvent e) {
-            newX.setText(String.valueOf(xSlider.getValue()/10.));
-        }
-    });
-	
-    newX.addKeyListener(new KeyAdapter(){
-        @Override
-        public void keyReleased(KeyEvent ke) {
-        	if(ke.getKeyCode()==KeyEvent.VK_ENTER){
-                String typed = newX.getText();
-                System.out.println("ENTER X: "+newX.getText());
-                try{
-	                float value = Float.parseFloat(typed);
-	                xSlider.setValue(Math.round(value*10));
-                }catch(NumberFormatException ex){
-                	ex.printStackTrace();
-                }
-        	}else System.out.println("NO ENTER");
-        }
-    });
-    
-    ySlider.addChangeListener(new ChangeListener(){
-        @Override
-        public void stateChanged(ChangeEvent e) {
-            newY.setText(String.valueOf(ySlider.getValue()/10.));
-        }
-    });
-	
-    newY.addKeyListener(new KeyAdapter(){
-        @Override
-        public void keyReleased(KeyEvent ke) {
-        	if(ke.getKeyCode()==KeyEvent.VK_ENTER){
-                String typed = newY.getText();
-                System.out.println("ENTER Y: "+newY.getText());
-                try{
-	                float value = Float.parseFloat(typed);
-	                ySlider.setValue(Math.round(value*10));
-                }catch(NumberFormatException ex){
-                	ex.printStackTrace();
-                }
-        	}else System.out.println("NO ENTER");
-        }
-    });
-    
-    zSlider.addChangeListener(new ChangeListener(){
-        @Override
-        public void stateChanged(ChangeEvent e) {
-            newZ.setText(String.valueOf(zSlider.getValue()/10.));
-        }
-    });
-	
-    newZ.addKeyListener(new KeyAdapter(){
-        @Override
-        public void keyReleased(KeyEvent ke) {
-        	if(ke.getKeyCode()==KeyEvent.VK_ENTER){
-                String typed = newZ.getText();
-                System.out.println("ENTER Z: "+newZ.getText());
-                try{
-	                float value = Float.parseFloat(typed);
-	                zSlider.setValue(Math.round(value*10));
-                }catch(NumberFormatException ex){
-                	ex.printStackTrace();
-                }
-        	}else System.out.println("NO ENTER");
-        }
-    });
-
-}
-
 	void displayErrorMessage(String errorMessage){
 		JOptionPane.showMessageDialog(this, errorMessage);
 	}
@@ -844,6 +918,15 @@ protected void createXYZTab(){
 		zData.addValue(newZ, "z", (Integer)(++ztime));
 		zSetPointData.addValue(setPointZ, "setPoint", (Integer)(ztime));
 		zErrorData.addValue(setPointZ-newZ,"Error",(Integer)(ztime));
+		
+	}
+	
+	public void updateLoadCells(float newCellValues[]){
+		if (newCellValues.length==6){
+			for (int i=0;i<newCellValues.length;i++){	
+				((DefaultValueDataset)LoadCellsPlot[i].getDataset()).setValue((int)newCellValues[i]);
+			}
+		}
 		
 	}
 	public abstract void updateMotorAngles(float newMotorAngles[]);
