@@ -14,6 +14,7 @@ public class PlatformModel  {
 								yOrig = 110,
 								zOrig = 240;
 	private float pitchCurrent, yawCurrent, rollCurrent;
+	private float xCurrent, yCurrent, zCurrent;
 	private float motorAnglesCurrent[]= new float[6];
 	private ArrayList<ModelObserver> observers;
 	
@@ -58,10 +59,13 @@ public class PlatformModel  {
 		}
 	}
 	
-	public void setPoint(float yawPoint, float pitchPoint, float rollPoint){
+	public void setPoint(float yawPoint, float pitchPoint, float rollPoint, float xPoint, float yPoint, float zPoint){
 		this.pitchPoint = pitchPoint;
 		this.yawPoint = yawPoint;
 		this.rollPoint = rollPoint;
+		this.xPoint = xPoint+xOrig;
+		this.yPoint = yPoint+yOrig;
+		this.zPoint = zPoint+zOrig;
 	}
 	
 	public void setCurrent(float xCurrent,float yCurrent,float zCurrent, float yawCurrent,float pitchCurrent, float rollCurrent,
@@ -123,6 +127,15 @@ public class PlatformModel  {
 	public float getRollPoint(){
 		return rollPoint;
 	}
+	public float getXPoint(){
+		return xPoint;
+	}
+	public float getYPoint(){
+		return yPoint;
+	}
+	public float getZPoint(){
+		return zPoint;
+	}
 	public float getX(){
 		return xPoint;
 	}
@@ -131,6 +144,15 @@ public class PlatformModel  {
 	}
 	public float getZ(){
 		return zPoint;
+	}
+	public float getRelativeX() {
+		return xPoint-xOrig;
+	}
+	public float getRelativeY() {
+		return yPoint-yOrig;
+	}
+	public float getRelativeZ() {
+		return zPoint-zOrig;
 	}
 	
 	public void attachObserver(ModelObserver o){
@@ -149,6 +171,9 @@ public class PlatformModel  {
 			o.updateRoll(rollCurrent);
 			o.updateYaw(yawCurrent);
 			o.updateMotorAngles(motorAnglesCurrent);
+			o.updateX(xCurrent);
+			o.updateY(yCurrent);
+			o.updateZ(zCurrent);
 			//TODO: agregar implementacion de X,Y y Z
 		}
 	}

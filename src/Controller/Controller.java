@@ -114,8 +114,7 @@ public class Controller implements ModelObserver{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try{
-				model.setPoint( view.getNewYaw(), view.getNewPitch(), view.getNewRoll());
-				
+				model.setPoint( view.getNewYaw(), view.getNewPitch(), view.getNewRoll(), view.getNewX(),view.getNewY(),view.getNewZ());				
 				comunicacion.sendMessage();
 			}catch(NumberFormatException ex){
 				ex.printStackTrace();
@@ -132,7 +131,8 @@ public class Controller implements ModelObserver{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try{
-				view.updatePos(model.getPitchPoint(), model.getYawPoint(), model.getRollPoint());
+				view.updatePos(model.getPitchPoint(), model.getYawPoint(), model.getRollPoint(),
+								model.getRelativeX(),model.getRelativeY(),model.getRelativeZ());
 			}catch(NumberFormatException ex){
 				ex.printStackTrace();
 			}
@@ -160,19 +160,19 @@ public class Controller implements ModelObserver{
 
 	@Override
 	public void updateX(float newX) {
-		view.updateX(newX);
+		view.updateX(newX,model.getRelativeX());
 		
 	}
 
 	@Override
 	public void updateY(float newY) {
-		view.updateY(newY);
+		view.updateY(newY,model.getRelativeY());
 		
 	}
 
 	@Override
 	public void updateZ(float newZ) {
-		view.updateZ(newZ);
+		view.updateZ(newZ,model.getRelativeZ());
 		
 	}
 

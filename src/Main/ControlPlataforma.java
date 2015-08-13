@@ -25,6 +25,9 @@ public class ControlPlataforma {
 				controller.updatePitch(r.nextFloat()-0.5f);
 				controller.updateYaw(r.nextFloat()-0.5f);
 				controller.updateRoll(r.nextFloat()-0.5f);
+				controller.updateX(r.nextFloat()-0.5f);
+				controller.updateY(r.nextFloat()-0.5f);
+				controller.updateZ(r.nextFloat()-0.5f);
 				i = (i+1)%10;
 			} catch (InterruptedException e) {
 				e.printStackTrace();
