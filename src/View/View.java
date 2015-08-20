@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -13,6 +14,9 @@ import java.awt.event.KeyEvent;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
@@ -44,6 +48,7 @@ import org.jfree.data.general.ValueDataset;
 import org.jfree.ui.GradientPaintTransformType;
 import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.StandardGradientPaintTransformer;
+import org.jfree.ui.about.AboutPanel;
 
 import Controller.Controller;
 import Model.GradoDeLibertad;
@@ -99,15 +104,21 @@ public abstract class View extends JFrame{
 	
 	protected DialPlot LoadCellsPlot[];
 	protected JFreeChart LoadCellsGraph[];
+	
+	protected JMenuBar superiorMenuBar;
+	protected JMenu menuFile, menuHelp;
+	protected JMenuItem exitItem,aboutItem;
+	
+	
 	public View(String title, PlatformModel model){
 		super(title);
 	}
 	
 	protected void createView(){
-		this.setBounds(0, 0, 1200, 700);
+		this.setBounds(0, 0, 1280, 720);
 		this.setResizable(false);
-		this.setUndecorated(true);
-	    alto = this.getHeight(); 
+//		this.setUndecorated(false);
+	    alto = this.getHeight()-50; 
 	    ancho = this.getWidth();
 		topPanel= new JPanel();
 		topPanel.setLayout(new BorderLayout());
@@ -127,6 +138,8 @@ public abstract class View extends JFrame{
 		
 		topPanel.setBounds(this.getBounds());
 		tabbedPane = new JTabbedPane();
+		
+		createDropDownMenus();
 		
 		createYPRTab();
 		createXYZTab();
@@ -745,7 +758,36 @@ public abstract class View extends JFrame{
 		}
 	}
 	
-	
+	protected void createDropDownMenus(){
+		setLayout(null);
+		superiorMenuBar = new JMenuBar();
+		setJMenuBar(superiorMenuBar);
+		
+		menuFile = new JMenu("Archivo");
+		menuHelp = new JMenu("Ayuda");
+		
+		superiorMenuBar.add(menuFile);
+		superiorMenuBar.add(menuHelp);
+		
+		exitItem = new JMenuItem("Salir");
+		aboutItem = new JMenuItem("Acerca de");
+		
+		menuFile.add(exitItem);
+		menuHelp.add(aboutItem);
+		//exit.addActionListener();
+		
+		aboutItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				aboutWindow.getInstance().setVisible(true);
+				
+			}
+		});
+//		protected JMenuBar superiorMenuBar;
+//		protected JMenu menuFile, menuHelp;
+//		protected JMenuItem exit,about;
+	}
 	void displayErrorMessage(String errorMessage){
 		JOptionPane.showMessageDialog(this, errorMessage);
 	}
@@ -947,4 +989,50 @@ public abstract class View extends JFrame{
 		return Float.parseFloat(newZ.getText());
 	}
 
+}
+
+class aboutWindow extends JFrame{
+	private static aboutWindow windowInstance;
+	private static final long serialVersionUID = -8508440130771626778L;
+	private JPanel aboutWindowPanel;
+	private JTextField license;
+	private JLabel copyright;
+	private JButton closeAboutWindow;
+	private Point aboutBase;
+	private int aboutAncho, aboutAlto;
+	
+	@SuppressWarnings("finally")
+	public static aboutWindow getInstance(){
+		try{
+			windowInstance.equals(windowInstance);
+		}catch(NullPointerException ex){
+			windowInstance = new aboutWindow(); 
+		}finally{
+			return windowInstance;
+		}
+	}
+	
+	private aboutWindow(){
+		aboutBase = new Point(0, 0);
+		aboutAncho = 480;
+		aboutAlto = 320;
+		this.setSize(aboutAncho, aboutAlto);
+		this.setResizable(false);
+		aboutWindowPanel = new JPanel();
+		license = new JTextField("licencia");
+		copyright = new JLabel("<html> Copyright 2015 <br> Ariel Rabinovich, Juan José Arce Giacobbe. <br>Todos los Derechos reservados </html>");
+		closeAboutWindow = new JButton("Cerrar");
+		closeAboutWindow.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setVisible(false);
+			}
+		});
+		license.setBounds((int)(aboutBase.getX()+aboutAncho/10), (int)(aboutBase.getY()+aboutAlto/8),(int)(aboutAncho*0.9f), (int)(aboutAlto*0.6f));
+		copyright.setBounds(license.getX(),license.getY()+license.getHeight()+10, license.getWidth(), 100);
+		this.add(aboutWindowPanel);
+		aboutWindowPanel.add(license);
+		aboutWindowPanel.add(copyright);
+		aboutWindowPanel.add(closeAboutWindow);
+	}
 }
