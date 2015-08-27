@@ -92,15 +92,15 @@ public class DebugView extends View {
 		newKiRoll.setBounds(kiRollText.getX() + kiRollText.getWidth(), kiRollText.getY(), 50, 30);
 		newKdRoll.setBounds(kdRollText.getX() + kdRollText.getWidth(), kdRollText.getY(), 50, 30);
 		
-		newKpPitch.setText("1.0");
+		newKpPitch.setText("0.1");
 		newKiPitch.setText("0.0");
 		newKdPitch.setText("0.0");
 		
-		newKpYaw.setText("1.0");
+		newKpYaw.setText("0.1");
 		newKiYaw.setText("0.0");
 		newKdYaw.setText("0.0");
 		
-		newKpRoll.setText("1.0");
+		newKpRoll.setText("0.1");
 		newKiRoll.setText("0.0");
 		newKdRoll.setText("0.0");
 		

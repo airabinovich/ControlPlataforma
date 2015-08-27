@@ -10,9 +10,9 @@ public class PlatformModel  {
 					kpRoll,kiRoll,kdRoll;
 	private float pitchPoint, yawPoint, rollPoint;
 	private float xPoint, yPoint, zPoint;
-	private static final float 	xOrig = 110,
-								yOrig = 110,
-								zOrig = 240;
+	private static final float 	xOrig = 101,
+								yOrig = 113,
+								zOrig = 230;
 	private float pitchCurrent, yawCurrent, rollCurrent;
 	private float xCurrent, yCurrent, zCurrent;
 	private float motorAnglesCurrent[]= new float[6];
@@ -21,7 +21,7 @@ public class PlatformModel  {
 	
 	public PlatformModel(){
 		PID = false;
-		kpPitch = kpYaw = kpRoll = 0.05f;
+		kpPitch = kpYaw = kpRoll = 0.10f;
 		kiPitch = kiYaw = kiRoll = 0;
 		kdPitch = kdYaw = kdRoll = 0;
 		xPoint=xOrig;
@@ -71,7 +71,10 @@ public class PlatformModel  {
 	
 	public void setCurrent(float xCurrent,float yCurrent,float zCurrent, float yawCurrent,float pitchCurrent, float rollCurrent,
 							float m0, float m1, float m2, float m3, float m4, float m5){
-		//TODO implementar x,y,z y celdas de carga
+		//TODO implementar celdas de carga
+		this.xCurrent=xCurrent;
+		this.yCurrent=yCurrent;
+		this.zCurrent=zCurrent;
 		this.pitchCurrent = pitchCurrent;
 		this.yawCurrent = yawCurrent;
 		this.rollCurrent = rollCurrent;
