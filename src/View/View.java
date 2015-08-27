@@ -6,22 +6,33 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.text.PlainDocument;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -44,6 +55,7 @@ import org.jfree.data.general.ValueDataset;
 import org.jfree.ui.GradientPaintTransformType;
 import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.StandardGradientPaintTransformer;
+import org.jfree.ui.about.AboutPanel;
 
 import Controller.Controller;
 import Model.GradoDeLibertad;
@@ -99,15 +111,21 @@ public abstract class View extends JFrame{
 	
 	protected DialPlot LoadCellsPlot[];
 	protected JFreeChart LoadCellsGraph[];
+	
+	protected JMenuBar superiorMenuBar;
+	protected JMenu menuFile, menuHelp;
+	protected JMenuItem exitItem,aboutItem;
+	
+	
 	public View(String title, PlatformModel model){
 		super(title);
 	}
 	
 	protected void createView(){
-		this.setBounds(0, 0, 1200, 700);
+		this.setBounds(0, 0, 1280, 720);
 		this.setResizable(false);
-		this.setUndecorated(true);
-	    alto = this.getHeight(); 
+//		this.setUndecorated(false);
+	    alto = this.getHeight()-50; 
 	    ancho = this.getWidth();
 		topPanel= new JPanel();
 		topPanel.setLayout(new BorderLayout());
@@ -127,6 +145,8 @@ public abstract class View extends JFrame{
 		
 		topPanel.setBounds(this.getBounds());
 		tabbedPane = new JTabbedPane();
+		
+		createDropDownMenus();
 		
 		createYPRTab();
 		createXYZTab();
@@ -745,7 +765,44 @@ public abstract class View extends JFrame{
 		}
 	}
 	
-	
+	protected void createDropDownMenus(){
+		setLayout(null);
+		superiorMenuBar = new JMenuBar();
+		setJMenuBar(superiorMenuBar);
+		
+		menuFile = new JMenu("Archivo");
+		menuHelp = new JMenu("Ayuda");
+		
+		superiorMenuBar.add(menuFile);
+		superiorMenuBar.add(menuHelp);
+		
+		exitItem = new JMenuItem("Salir");
+		aboutItem = new JMenuItem("Acerca de");
+		
+		menuFile.add(exitItem);
+		menuHelp.add(aboutItem);
+		//exit.addActionListener();
+		
+		aboutItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				aboutWindow.getInstance().setVisible(true);
+				
+			}
+		});
+		
+		exitItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
+//		protected JMenuBar superiorMenuBar;
+//		protected JMenu menuFile, menuHelp;
+//		protected JMenuItem exit,about;
+	}
 	void displayErrorMessage(String errorMessage){
 		JOptionPane.showMessageDialog(this, errorMessage);
 	}
@@ -947,4 +1004,84 @@ public abstract class View extends JFrame{
 		return Float.parseFloat(newZ.getText());
 	}
 
+}
+
+class aboutWindow extends JFrame{
+	private static aboutWindow windowInstance;
+	private static final long serialVersionUID = -8508440130771626778L;
+	private JPanel aboutWindowPanel, backgroundPanel;
+	private JTextArea licenseTextArea;
+	private String license;
+	private JScrollPane licenseScrollPane;
+	private JLabel copyright;
+	private JButton closeAboutWindowButton;
+	private Point aboutBase;
+	private int aboutAncho, aboutAlto;
+	
+	@SuppressWarnings("finally")
+	public static aboutWindow getInstance(){
+		try{
+			windowInstance.equals(windowInstance);
+		}catch(NullPointerException ex){
+			windowInstance = new aboutWindow(); 
+		}finally{
+			return windowInstance;
+		}
+	}
+	
+	private aboutWindow(){
+		aboutBase = new Point(0, 0);
+		aboutAncho = 480;
+		aboutAlto = 320;
+		this.setSize(aboutAncho, aboutAlto);
+		this.setResizable(false);
+		this.setTitle("Acerca de");
+		aboutWindowPanel = new JPanel();
+		backgroundPanel = new JPanel();
+		license = parseLicenseFile();
+		licenseTextArea = new JTextArea(license,15,38);
+		licenseTextArea.setEditable(false);
+		licenseTextArea.setMaximumSize(new Dimension((int)(aboutAncho * 0.9f),(int)(aboutAlto*0.6f)));
+		licenseScrollPane = new JScrollPane(licenseTextArea,
+                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		
+		licenseTextArea.setLineWrap(true);
+		licenseTextArea.setWrapStyleWord(true);
+		
+		copyright = new JLabel("<html> Copyright 2015 <br> Ariel Rabinovich, Juan José Arce Giacobbe. <br>Todos los Derechos reservados </html>");
+		closeAboutWindowButton = new JButton("Cerrar");
+		closeAboutWindowButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setVisible(false);
+			}
+		});
+		licenseTextArea.setBounds((int)(aboutBase.getX()+aboutAncho/10), (int)(aboutBase.getY()+aboutAlto/8),(int)(aboutAncho*0.9f), (int)(aboutAlto*0.6f));
+		licenseScrollPane.setBounds((int)(licenseTextArea.getX()+licenseTextArea.getWidth()),(int)(licenseTextArea.getY()),10,licenseTextArea.getHeight());
+		copyright.setBounds(licenseTextArea.getX(),licenseTextArea.getY()+licenseTextArea.getHeight()+10, licenseTextArea.getWidth(), 100);
+		
+		backgroundPanel.add(licenseScrollPane);
+		aboutWindowPanel.setBounds(0,(int)(aboutAlto*0.6f), aboutAncho, (int)(aboutAlto*0.4f));
+		backgroundPanel.add(aboutWindowPanel);
+
+		aboutWindowPanel.add(copyright);
+		aboutWindowPanel.add(closeAboutWindowButton);
+		this.add(backgroundPanel);
+	}
+
+	private String parseLicenseFile() {
+		String fileContent = new String();
+		try {
+			Scanner file = new Scanner(new File("./LICENSE"));
+			while(file.hasNext()){
+				System.out.println("holaaa");
+				fileContent+=(file.nextLine()+"\n");
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		System.out.println(fileContent);
+		return fileContent;
+	}
 }

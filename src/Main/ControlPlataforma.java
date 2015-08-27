@@ -16,6 +16,7 @@ public class ControlPlataforma {
 		
 		model = new PlatformModel();
 		controller = new Controller(model, true);
+
 //		int i = 0;
 //		Random r = new Random();
 //		float celdas[]= new float[6];
