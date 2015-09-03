@@ -1,7 +1,4 @@
 package Main;
-
-import java.util.Random;
-
 import Controller.Controller;
 import Model.PlatformModel;
 
