@@ -1,0 +1,341 @@
+BL51 BANKED LINKER/LOCATER V5.15              07/27/2015  20:33:59  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V5.15, INVOKED BY:
+C:\SILABS\MCU\IDEFILES\C51\BIN\BL51.EXE C:\Users\DiegoG\Desktop\celdadiferenci
+>> al_f350\adc_celda_dif.obj TO C:\Users\DiegoG\Desktop\celdadiferencial_f350\
+>> adc_celda_dif RS (256) PL (68) PW (78)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  C:\Users\DiegoG\Desktop\celdadiferencial_f350\adc_celda_dif.obj (ADC_CELDA_D
+>> IF)
+  C:\SILABS\MCU\IDEFILES\C51\LIB\C51S.LIB (?C_STARTUP)
+  C:\SILABS\MCU\IDEFILES\C51\LIB\C51S.LIB (?C?ULDIV)
+  C:\SILABS\MCU\IDEFILES\C51\LIB\C51S.LIB (PRINTF)
+  C:\SILABS\MCU\IDEFILES\C51\LIB\C51S.LIB (?C?CLDPTR)
+  C:\SILABS\MCU\IDEFILES\C51\LIB\C51S.LIB (?C?CLDOPTR)
+  C:\SILABS\MCU\IDEFILES\C51\LIB\C51S.LIB (?C?CSTPTR)
+  C:\SILABS\MCU\IDEFILES\C51\LIB\C51S.LIB (?C?PLDIIDATA)
+  C:\SILABS\MCU\IDEFILES\C51\LIB\C51S.LIB (?C?CCASE)
+  C:\SILABS\MCU\IDEFILES\C51\LIB\C51S.LIB (PUTCHAR)
+
+
+LINK MAP OF MODULE:  C:\Users\DiegoG\Desktop\celdadiferencial_f350\adc_celda_d
+>> if (ADC_CELDA_DIF)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0004H     UNIT         ?DT?ADC_CELDA_DIF
+                    000CH     0014H                  *** GAP ***
+            BIT     0020H.0   0001H.1   UNIT         _BIT_GROUP_
+                    0021H.1   0000H.7                *** GAP ***
+            DATA    0022H     001EH     UNIT         _DATA_GROUP_
+            IDATA   0040H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     0027H     UNIT         ?PR?PUTCHAR?PUTCHAR
+            CODE    002AH     0021H     UNIT         ?PR?ADC0_INIT?ADC_CELDA_D
+>> IF
+            CODE    004BH     0007H     UNIT         ?PR?OSCILLATOR_INIT?ADC_C
+>> ELDA_DIF
+                    0052H     0001H                  *** GAP ***
+            CODE    0053H     0003H     ABSOLUTE     
+            CODE    0056H     035CH     UNIT         ?PR?PRINTF?PRINTF
+            CODE    03B2H     015CH     UNIT         ?C?LIB_CODE
+            CODE    050EH     0156H     UNIT         ?PR?ADC0_ISR?ADC_CELDA_DI
+>> F
+            CODE    0664H     0018H     UNIT         ?PR?MAIN?ADC_CELDA_DIF
+            CODE    067CH     0017H     UNIT         ?PR?UART0_INIT?ADC_CELDA_
+>> DIF
+            CODE    0693H     000DH     UNIT         ?CO?ADC_CELDA_DIF
+            CODE    06A0H     000CH     UNIT         ?C_C51STARTUP
+            CODE    06ACH     000AH     UNIT         ?PR?PORT_INIT?ADC_CELDA_D
+>> IF
+
+
+
+OVERLAY MAP OF MODULE:   C:\Users\DiegoG\Desktop\celdadiferencial_f350\adc_cel
+>> da_dif (ADC_CELDA_DIF)
+
+
+BL51 BANKED LINKER/LOCATER V5.15            07/27/2015  20:33:59  PAGE 2
+
+
+SEGMENT                                      BIT_GROUP          DATA_GROUP 
+  +--> CALLED SEGMENT                     START    LENGTH     START    LENGTH
+-----------------------------------------------------------------------------
+?PR?ADC0_ISR?ADC_CELDA_DIF                -----    -----      0022H    000AH
+  +--> ?CO?ADC_CELDA_DIF
+  +--> ?PR?PRINTF?PRINTF
+
+?PR?PRINTF?PRINTF                         0020H.0  0001H.1    002CH    0014H
+  +--> ?PR?PUTCHAR?PUTCHAR
+
+*** NEW ROOT ***************************************************
+
+?C_C51STARTUP                             -----    -----      -----    -----
+  +--> ?PR?MAIN?ADC_CELDA_DIF
+
+?PR?MAIN?ADC_CELDA_DIF                    -----    -----      -----    -----
+  +--> ?PR?OSCILLATOR_INIT?ADC_CELDA_DIF
+  +--> ?PR?PORT_INIT?ADC_CELDA_DIF
+  +--> ?PR?UART0_INIT?ADC_CELDA_DIF
+  +--> ?PR?ADC0_INIT?ADC_CELDA_DIF
+
+
+
+SYMBOL TABLE OF MODULE:  C:\Users\DiegoG\Desktop\celdadiferencial_f350\adc_cel
+>> da_dif (ADC_CELDA_DIF)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        ADC_CELDA_DIF
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:00FBH         PUBLIC        ADC0CF
+  D:00E6H         PUBLIC        EIE1
+  B:00A8H.7       PUBLIC        EA
+  D:00F4H         PUBLIC        ADC0CN
+  D:00F3H         PUBLIC        ADC0MD
+  D:00A4H         PUBLIC        P0MDOUT
+  D:00D9H         PUBLIC        PCA0MD
+  C:004BH         PUBLIC        Oscillator_Init
+  D:00E1H         PUBLIC        XBR0
+  C:06ACH         PUBLIC        Port_Init
+  D:00E2H         PUBLIC        XBR1
+  D:00D1H         PUBLIC        REF0CN
+  B:00E8H.5       PUBLIC        AD0INT
+  C:0664H         PUBLIC        main
+  D:0089H         PUBLIC        TMOD
+  D:00C5H         PUBLIC        ADC0H
+  D:00B2H         PUBLIC        OSCICN
+  D:00BFH         PUBLIC        ADC0DAC
+  D:00C3H         PUBLIC        ADC0L
+  D:009AH         PUBLIC        ADC0DEC
+  D:00C4H         PUBLIC        ADC0M
+  C:050EH         PUBLIC        ADC0_ISR
+  B:0098H.1       PUBLIC        TI0
+  D:008DH         PUBLIC        TH1
+  D:008BH         PUBLIC        TL1
+  D:00F7H         PUBLIC        ADC0CLK
+  B:0088H.6       PUBLIC        TR1
+  D:00BDH         PUBLIC        ADC0BUF
+  D:00EFH         PUBLIC        RSTSRC
+  C:067CH         PUBLIC        UART0_Init
+  D:0098H         PUBLIC        SCON0
+  C:002AH         PUBLIC        ADC0_Init
+  D:008EH         PUBLIC        CKCON
+  D:00C6H         PUBLIC        ADC0MUX
+BL51 BANKED LINKER/LOCATER V5.15            07/27/2015  20:33:59  PAGE 3
+
+
+  -------         PROC          MAIN
+  C:0664H         LINE#         52
+  C:0664H         LINE#         53
+  C:0664H         LINE#         54
+  C:0667H         LINE#         57
+  C:066AH         LINE#         58
+  C:066DH         LINE#         59
+  C:0670H         LINE#         60
+  C:0673H         LINE#         62
+  C:0675H         LINE#         63
+  C:0678H         LINE#         64
+  C:067AH         LINE#         66
+  C:067AH         LINE#         67
+  -------         ENDPROC       MAIN
+  -------         PROC          OSCILLATOR_INIT
+  C:004BH         LINE#         85
+  C:004BH         LINE#         86
+  C:004BH         LINE#         87
+  C:004EH         LINE#         89
+  C:0051H         LINE#         90
+  -------         ENDPROC       OSCILLATOR_INIT
+  -------         PROC          PORT_INIT
+  C:06ACH         LINE#         109
+  C:06ACH         LINE#         110
+  C:06ACH         LINE#         111
+  C:06AFH         LINE#         112
+  C:06B2H         LINE#         113
+  C:06B5H         LINE#         114
+  -------         ENDPROC       PORT_INIT
+  -------         PROC          UART0_INIT
+  C:067CH         LINE#         126
+  C:067CH         LINE#         127
+  C:067CH         LINE#         128
+  C:067FH         LINE#         133
+  C:067FH         LINE#         134
+  C:0682H         LINE#         135
+  C:0685H         LINE#         136
+  C:0685H         LINE#         137
+  C:0685H         LINE#         138
+  C:0685H         LINE#         139
+  C:0685H         LINE#         140
+  C:0685H         LINE#         141
+  C:0685H         LINE#         142
+  C:0685H         LINE#         143
+  C:0685H         LINE#         144
+  C:0685H         LINE#         145
+  C:0685H         LINE#         146
+  C:0685H         LINE#         147
+  C:0685H         LINE#         149
+  C:0685H         LINE#         151
+  C:0688H         LINE#         152
+  C:068BH         LINE#         153
+  C:068EH         LINE#         154
+  C:0690H         LINE#         155
+  C:0692H         LINE#         156
+  -------         ENDPROC       UART0_INIT
+  -------         PROC          ADC0_INIT
+  C:002AH         LINE#         168
+  C:002AH         LINE#         169
+  C:002AH         LINE#         170
+  C:002DH         LINE#         171
+  C:0030H         LINE#         172
+  C:0033H         LINE#         175
+  C:0036H         LINE#         180
+  C:003CH         LINE#         182
+BL51 BANKED LINKER/LOCATER V5.15            07/27/2015  20:33:59  PAGE 4
+
+
+  C:003EH         LINE#         183
+  C:0041H         LINE#         185
+  C:0044H         LINE#         191
+  C:0047H         LINE#         192
+  C:004AH         LINE#         195
+  -------         ENDPROC       ADC0_INIT
+  -------         PROC          ADC0_ISR
+  -------         DO            
+  D:0008H         SYMBOL        rawValue
+  D:0022H         SYMBOL        mV
+  D:0026H         SYMBOL        celda1
+  D:0028H         SYMBOL        celda2
+  D:002AH         SYMBOL        celda3
+  D:0006H         SYMBOL        celda4
+  -------         ENDDO         
+  C:050EH         LINE#         209
+  C:052BH         LINE#         216
+  C:052EH         LINE#         217
+  C:0530H         LINE#         220
+  C:0536H         LINE#         221
+  C:0536H         LINE#         223
+  C:0539H         LINE#         224
+  C:053CH         LINE#         225
+  C:053EH         LINE#         228
+  C:0540H         LINE#         229
+  C:0543H         LINE#         231
+  C:0546H         LINE#         233
+  C:0548H         LINE#         234
+  C:054BH         LINE#         235
+  C:054EH         LINE#         236
+  C:0551H         LINE#         238
+  C:056AH         LINE#         240
+  C:056EH         LINE#         243
+  C:0571H         LINE#         244
+  C:0577H         LINE#         245
+  C:0577H         LINE#         248
+  C:057AH         LINE#         249
+  C:057DH         LINE#         250
+  C:057FH         LINE#         253
+  C:0581H         LINE#         254
+  C:0584H         LINE#         256
+  C:0587H         LINE#         258
+  C:0589H         LINE#         259
+  C:058CH         LINE#         260
+  C:058FH         LINE#         261
+  C:0592H         LINE#         263
+  C:05ABH         LINE#         265
+  C:05AFH         LINE#         268
+  C:05B2H         LINE#         269
+  C:05B8H         LINE#         270
+  C:05B8H         LINE#         273
+  C:05BBH         LINE#         274
+  C:05BEH         LINE#         275
+  C:05C0H         LINE#         278
+  C:05C2H         LINE#         279
+  C:05C5H         LINE#         281
+  C:05C8H         LINE#         283
+  C:05CAH         LINE#         284
+  C:05CDH         LINE#         285
+  C:05D0H         LINE#         286
+  C:05D3H         LINE#         288
+  C:05ECH         LINE#         290
+  C:05F0H         LINE#         293
+  C:05F2H         LINE#         295
+  C:05F2H         LINE#         297
+BL51 BANKED LINKER/LOCATER V5.15            07/27/2015  20:33:59  PAGE 5
+
+
+  C:05F5H         LINE#         298
+  C:05F8H         LINE#         299
+  C:05FBH         LINE#         302
+  C:05FEH         LINE#         303
+  C:0601H         LINE#         305
+  C:0604H         LINE#         307
+  C:0607H         LINE#         308
+  C:060AH         LINE#         309
+  C:060DH         LINE#         310
+  C:0610H         LINE#         312
+  C:062AH         LINE#         314
+  C:062AH         LINE#         318
+  C:0649H         LINE#         320
+  C:0649H         LINE#         358
+  -------         ENDPROC       ADC0_ISR
+  -------         ENDMOD        ADC_CELDA_DIF
+
+  -------         MODULE        ?C?ULDIV
+  C:03EEH         PUBLIC        ?C?ULDIV
+  -------         ENDMOD        ?C?ULDIV
+
+  -------         MODULE        PRINTF
+  D:002CH         PUBLIC        ?_PRINTF517?BYTE
+  D:002CH         PUBLIC        ?_PRINTF?BYTE
+  D:002CH         PUBLIC        ?_SPRINTF517?BYTE
+  D:002CH         PUBLIC        ?_SPRINTF?BYTE
+  C:00B8H         PUBLIC        _PRINTF
+  C:00B8H         PUBLIC        _PRINTF517
+  C:00B2H         PUBLIC        _SPRINTF
+  C:00B2H         PUBLIC        _SPRINTF517
+  -------         ENDMOD        PRINTF
+
+  -------         MODULE        ?C?CLDPTR
+  C:0480H         PUBLIC        ?C?CLDPTR
+  -------         ENDMOD        ?C?CLDPTR
+
+  -------         MODULE        ?C?CLDOPTR
+  C:0499H         PUBLIC        ?C?CLDOPTR
+  -------         ENDMOD        ?C?CLDOPTR
+
+  -------         MODULE        ?C?CSTPTR
+  C:04C6H         PUBLIC        ?C?CSTPTR
+  -------         ENDMOD        ?C?CSTPTR
+
+  -------         MODULE        ?C?PLDIIDATA
+  C:04D8H         PUBLIC        ?C?PLDIIDATA
+  -------         ENDMOD        ?C?PLDIIDATA
+
+  -------         MODULE        ?C?CCASE
+  C:04E8H         PUBLIC        ?C?CCASE
+  -------         ENDMOD        ?C?CCASE
+
+  -------         MODULE        PUTCHAR
+  C:0003H         PUBLIC        _PUTCHAR
+  -------         ENDMOD        PUTCHAR
+
+******************************************************************************
+>> 
+* RESTRICTED VERSION WITH 1000H BYTE CODE SIZE LIMIT; USED: 06B5H BYTE (41%) *
+>> 
+******************************************************************************
+>> 
+
+Program Size: data=44.1 xdata=0 code=1717
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

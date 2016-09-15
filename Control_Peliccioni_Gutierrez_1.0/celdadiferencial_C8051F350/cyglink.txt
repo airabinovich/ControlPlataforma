@@ -1,0 +1,1 @@
+"C:\Users\DiegoG\Desktop\celdadiferencial_f350\adc_celda_dif.obj"  TO "C:\Users\DiegoG\Desktop\celdadiferencial_f350\adc_celda_dif" RS(256) PL(68) PW(78) 
